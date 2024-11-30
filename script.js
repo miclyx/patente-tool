@@ -10,7 +10,8 @@ async function loadData() {
     const categoriesText = await categoriesResponse.text();
     categories = parseCSV(categoriesText);
 
-    const questionsResponse = await fetch("patente_questions_with_categories.csv");
+    // 替换文件名为新的文件
+    const questionsResponse = await fetch("patente_questions_with_categories_fixed.csv");
     const questionsText = await questionsResponse.text();
     questions = parseCSV(questionsText);
 
@@ -22,13 +23,17 @@ function parseCSV(csv) {
     const lines = csv.split("\n");
     const headers = lines[0].split(",");
     return lines.slice(1).map(line => {
-        const values = line.split(",");
+        const values = line.match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g); // 更安全的字段匹配
+        if (!values) return null;
+
         const obj = {};
         headers.forEach((header, index) => {
-            obj[header.trim()] = values[index] ? values[index].trim() : "";
+            obj[header.trim()] = values[index]
+                ? values[index].trim().replace(/^"|"$/g, '') // 去掉双引号
+                : "";
         });
         return obj;
-    }).filter(row => Object.keys(row).length > 1);
+    }).filter(row => row !== null && Object.keys(row).length > 1);
 }
 
 // 渲染大分类
@@ -48,11 +53,10 @@ function renderMainCategories() {
     });
 }
 
-// 渲染类别
+// 渲染小分类
 function renderSubCategories() {
     const content = document.getElementById("main-content");
     content.innerHTML = `<h2>${currentMainCategory}: 请选择类别</h2>`;
-    addBackButton(() => renderMainCategories());
     const subCategories = categories.filter(cat => cat["大分类"] === currentMainCategory);
     subCategories.forEach(sub => {
         const div = document.createElement("div");
@@ -70,18 +74,21 @@ function renderSubCategories() {
 function renderQuestions(imageUrl) {
     const content = document.getElementById("main-content");
     content.innerHTML = `<h2>${currentSubCategory}: 题目列表</h2>`;
-    addBackButton(() => renderSubCategories());
+
     if (imageUrl && imageUrl !== "无图片") {
         const imgContainer = document.createElement("div");
         imgContainer.className = "image-container";
         imgContainer.innerHTML = `<img src="${imageUrl}" alt="${currentSubCategory}">`;
         content.appendChild(imgContainer);
     }
+
     const subQuestions = questions.filter(q => q["类别"].trim() === currentSubCategory.trim());
+
     if (subQuestions.length === 0) {
         content.innerHTML += `<p>未找到该类别的题目。</p>`;
         return;
     }
+
     subQuestions.forEach(question => {
         const div = document.createElement("div");
         div.className = "question";
@@ -91,20 +98,6 @@ function renderQuestions(imageUrl) {
         `;
         content.appendChild(div);
     });
-}
-
-// 添加后退按钮
-function addBackButton(callback) {
-    const content = document.getElementById("main-content");
-    const backButton = document.createElement("a");
-    backButton.className = "back-button";
-    backButton.innerText = "返回";
-    backButton.href = "#";
-    backButton.onclick = (e) => {
-        e.preventDefault();
-        callback();
-    };
-    content.appendChild(backButton);
 }
 
 // 初始化
