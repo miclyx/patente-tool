@@ -6,21 +6,14 @@ let currentSubCategory = ""; // 当前选择的类别
 
 // 加载数据函数
 async function loadData() {
-    // 加载大分类和小分类
     const categoriesResponse = await fetch("categories_and_images.csv");
     const categoriesText = await categoriesResponse.text();
     categories = parseCSV(categoriesText);
 
-    // 加载题目
     const questionsResponse = await fetch("patente_questions_with_categories.csv");
     const questionsText = await questionsResponse.text();
     questions = parseCSV(questionsText);
 
-    // 调试：打印加载的数据
-    console.log("加载的大分类和小分类:", categories);
-    console.log("加载的题目:", questions);
-
-    // 显示大分类
     renderMainCategories();
 }
 
@@ -59,6 +52,7 @@ function renderMainCategories() {
 function renderSubCategories() {
     const content = document.getElementById("main-content");
     content.innerHTML = `<h2>${currentMainCategory}: 请选择类别</h2>`;
+    addBackButton(() => renderMainCategories());
     const subCategories = categories.filter(cat => cat["大分类"] === currentMainCategory);
     subCategories.forEach(sub => {
         const div = document.createElement("div");
@@ -76,21 +70,18 @@ function renderSubCategories() {
 function renderQuestions(imageUrl) {
     const content = document.getElementById("main-content");
     content.innerHTML = `<h2>${currentSubCategory}: 题目列表</h2>`;
-
+    addBackButton(() => renderSubCategories());
     if (imageUrl && imageUrl !== "无图片") {
-        const img = document.createElement("img");
-        img.src = imageUrl;
-        content.appendChild(img);
+        const imgContainer = document.createElement("div");
+        imgContainer.className = "image-container";
+        imgContainer.innerHTML = `<img src="${imageUrl}" alt="${currentSubCategory}">`;
+        content.appendChild(imgContainer);
     }
-
-    // 过滤题目，匹配类别字段
     const subQuestions = questions.filter(q => q["类别"].trim() === currentSubCategory.trim());
-
     if (subQuestions.length === 0) {
         content.innerHTML += `<p>未找到该类别的题目。</p>`;
         return;
     }
-
     subQuestions.forEach(question => {
         const div = document.createElement("div");
         div.className = "question";
@@ -100,6 +91,20 @@ function renderQuestions(imageUrl) {
         `;
         content.appendChild(div);
     });
+}
+
+// 添加后退按钮
+function addBackButton(callback) {
+    const content = document.getElementById("main-content");
+    const backButton = document.createElement("a");
+    backButton.className = "back-button";
+    backButton.innerText = "返回";
+    backButton.href = "#";
+    backButton.onclick = (e) => {
+        e.preventDefault();
+        callback();
+    };
+    content.appendChild(backButton);
 }
 
 // 初始化
