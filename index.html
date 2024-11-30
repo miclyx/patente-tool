@@ -9,113 +9,30 @@
             font-family: Arial, sans-serif;
             margin: 20px;
         }
-        .word {
-            color: blue;
+        .category, .subcategory, .question {
             cursor: pointer;
+            color: blue;
+            text-decoration: underline;
+            margin-bottom: 10px;
+        }
+        .category:hover, .subcategory:hover, .question:hover {
+            color: darkblue;
+        }
+        img {
+            max-width: 100%;
+            height: auto;
+            margin-top: 20px;
         }
         #output {
             margin-top: 20px;
-            color: green;
             font-weight: bold;
         }
     </style>
-    <script>
-        let questions = [];
-        let currentCategory = "";
-        let currentPage = 0;
-        const itemsPerPage = 10; // 每页显示 10 条题目
-
-        // 加载 JSON 数据
-        async function loadData() {
-            try {
-                const questionsResponse = await fetch("questions.json");
-                questions = await questionsResponse.json();
-
-                renderCategories();
-            } catch (error) {
-                console.error("加载数据失败:", error);
-            }
-        }
-
-        // 渲染类别
-        function renderCategories() {
-            const categories = [...new Set(questions.map(q => q.类别))]; // 获取所有类别
-            const container = document.getElementById("categories");
-            container.innerHTML = ""; // 清空内容
-
-            categories.forEach(category => {
-                container.innerHTML += `
-                    <button onclick="showCategory('${category}')">${category}</button>
-                `;
-            });
-        }
-
-        // 显示指定类别的题目
-        function showCategory(category) {
-            currentCategory = category;
-            currentPage = 0; // 重置为第一页
-            renderQuestions();
-        }
-
-        // 渲染当前页的题目
-        function renderQuestions() {
-            const container = document.getElementById("questions");
-            container.innerHTML = ""; // 清空内容
-            const filteredQuestions = questions.filter(q => q.类别 === currentCategory);
-
-            const start = currentPage * itemsPerPage;
-            const end = Math.min(start + itemsPerPage, filteredQuestions.length);
-
-            for (let i = start; i < end; i++) {
-                const q = filteredQuestions[i];
-                container.innerHTML += `
-                    <div>
-                        <h4>${i + 1}. ${q.类别}</h4>
-                        <p>${q.题目}</p>
-                        <p>答案：${q.答案}</p>
-                    </div>
-                    <hr/>
-                `;
-            }
-
-            // 更新分页状态
-            document.getElementById("pagination").style.display = filteredQuestions.length > itemsPerPage ? "block" : "none";
-        }
-
-        // 下一页
-        function nextPage() {
-            const filteredQuestions = questions.filter(q => q.类别 === currentCategory);
-            if ((currentPage + 1) * itemsPerPage < filteredQuestions.length) {
-                currentPage++;
-                renderQuestions();
-            }
-        }
-
-        // 上一页
-        function previousPage() {
-            if (currentPage > 0) {
-                currentPage--;
-                renderQuestions();
-            }
-        }
-
-        // 初始化
-        window.onload = loadData;
-    </script>
 </head>
 <body>
     <h1>驾照学习工具</h1>
-    <h2>请选择题目类别</h2>
-    <div id="categories"></div>
-
-    <h2>题目列表</h2>
-    <div id="questions"></div>
-
-    <div id="pagination" style="display: none;">
-        <button onclick="previousPage()">上一页</button>
-        <button onclick="nextPage()">下一页</button>
-    </div>
-
+    <div id="main-content"></div>
     <div id="output"></div>
+    <script src="script.js"></script>
 </body>
 </html>
