@@ -2,7 +2,7 @@
 let categories = []; // 保存大分类、小分类和图片
 let questions = [];  // 保存所有题目
 let currentMainCategory = ""; // 当前选择的大分类
-let currentSubCategory = ""; // 当前选择的小分类
+let currentSubCategory = ""; // 当前选择的类别
 
 // 加载数据函数
 async function loadData() {
@@ -15,6 +15,10 @@ async function loadData() {
     const questionsResponse = await fetch("patente_questions_with_categories.csv");
     const questionsText = await questionsResponse.text();
     questions = parseCSV(questionsText);
+
+    // 调试：打印加载的数据
+    console.log("加载的大分类和小分类:", categories);
+    console.log("加载的题目:", questions);
 
     // 显示大分类
     renderMainCategories();
@@ -51,10 +55,10 @@ function renderMainCategories() {
     });
 }
 
-// 渲染小分类
+// 渲染类别
 function renderSubCategories() {
     const content = document.getElementById("main-content");
-    content.innerHTML = `<h2>${currentMainCategory}: 请选择小分类</h2>`;
+    content.innerHTML = `<h2>${currentMainCategory}: 请选择类别</h2>`;
     const subCategories = categories.filter(cat => cat["大分类"] === currentMainCategory);
     subCategories.forEach(sub => {
         const div = document.createElement("div");
@@ -72,12 +76,21 @@ function renderSubCategories() {
 function renderQuestions(imageUrl) {
     const content = document.getElementById("main-content");
     content.innerHTML = `<h2>${currentSubCategory}: 题目列表</h2>`;
+
     if (imageUrl && imageUrl !== "无图片") {
         const img = document.createElement("img");
         img.src = imageUrl;
         content.appendChild(img);
     }
-    const subQuestions = questions.filter(q => q["类别"] === currentSubCategory);
+
+    // 过滤题目，匹配类别字段
+    const subQuestions = questions.filter(q => q["类别"].trim() === currentSubCategory.trim());
+
+    if (subQuestions.length === 0) {
+        content.innerHTML += `<p>未找到该类别的题目。</p>`;
+        return;
+    }
+
     subQuestions.forEach(question => {
         const div = document.createElement("div");
         div.className = "question";
