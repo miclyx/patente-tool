@@ -77,7 +77,7 @@ function renderQuestions(imageUrl) {
         img.src = imageUrl;
         content.appendChild(img);
     }
-    const subQuestions = questions.filter(q => q["小分类"] === currentSubCategory);
+    const subQuestions = questions.filter(q => q["类别"] === currentSubCategory);
     subQuestions.forEach(question => {
         const div = document.createElement("div");
         div.className = "question";
