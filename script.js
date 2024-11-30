@@ -2,19 +2,25 @@
 let categories = []; // 保存大分类、小分类和图片
 let questions = [];  // 保存所有题目
 let currentMainCategory = ""; // 当前选择的大分类
-let currentSubCategory = ""; // 当前选择的类别
+let currentSubCategory = ""; // 当前选择的小分类
 
 // 加载数据函数
 async function loadData() {
+    // 加载大分类和小分类
     const categoriesResponse = await fetch("categories_and_images.csv");
     const categoriesText = await categoriesResponse.text();
     categories = parseCSV(categoriesText);
 
-    // 替换文件名为新的文件
+    // 加载题目
     const questionsResponse = await fetch("patente_questions_with_categories_fixed.csv");
     const questionsText = await questionsResponse.text();
     questions = parseCSV(questionsText);
 
+    // 调试：打印加载的数据
+    console.log("加载的大分类和小分类:", categories);
+    console.log("加载的题目:", questions);
+
+    // 显示大分类
     renderMainCategories();
 }
 
@@ -29,7 +35,7 @@ function parseCSV(csv) {
         const obj = {};
         headers.forEach((header, index) => {
             obj[header.trim()] = values[index]
-                ? values[index].trim().replace(/^"|"$/g, '') // 去掉双引号
+                ? values[index].trim().replace(/^"|"$/g, '') // 去掉开头和结尾的双引号
                 : "";
         });
         return obj;
@@ -40,7 +46,10 @@ function parseCSV(csv) {
 function renderMainCategories() {
     const content = document.getElementById("main-content");
     content.innerHTML = "<h2>请选择大分类</h2>";
-    const mainCategories = [...new Set(categories.map(cat => cat["大分类"]))];
+
+    // 获取唯一的大分类
+    const mainCategories = [...new Set(categories.map(cat => cat["大分类"].trim()))];
+
     mainCategories.forEach(category => {
         const div = document.createElement("div");
         div.className = "category";
@@ -57,17 +66,33 @@ function renderMainCategories() {
 function renderSubCategories() {
     const content = document.getElementById("main-content");
     content.innerHTML = `<h2>${currentMainCategory}: 请选择类别</h2>`;
-    const subCategories = categories.filter(cat => cat["大分类"] === currentMainCategory);
-    subCategories.forEach(sub => {
+
+    // 筛选属于当前大分类的所有小分类
+    const subCategories = categories
+        .filter(cat => cat["大分类"].trim() === currentMainCategory.trim())
+        .map(cat => cat["小分类"].trim());
+
+    // 去重
+    const uniqueSubCategories = [...new Set(subCategories)];
+
+    uniqueSubCategories.forEach(subCategory => {
         const div = document.createElement("div");
         div.className = "subcategory";
-        div.innerText = sub["小分类"];
+        div.innerText = subCategory;
         div.onclick = () => {
-            currentSubCategory = sub["小分类"];
-            renderQuestions(sub["图片"]);
+            currentSubCategory = subCategory;
+            const subCategoryData = categories.find(cat => cat["小分类"].trim() === subCategory.trim());
+            renderQuestions(subCategoryData ? subCategoryData["图片"] : null);
         };
         content.appendChild(div);
     });
+
+    // 添加返回按钮
+    const backButton = document.createElement("button");
+    backButton.innerText = "返回";
+    backButton.className = "back-button";
+    backButton.onclick = renderMainCategories;
+    content.appendChild(backButton);
 }
 
 // 渲染题目和图片
@@ -82,6 +107,7 @@ function renderQuestions(imageUrl) {
         content.appendChild(imgContainer);
     }
 
+    // 筛选属于当前类别的题目
     const subQuestions = questions.filter(q => q["类别"].trim() === currentSubCategory.trim());
 
     if (subQuestions.length === 0) {
@@ -93,11 +119,18 @@ function renderQuestions(imageUrl) {
         const div = document.createElement("div");
         div.className = "question";
         div.innerHTML = `
-            <p><strong>题目:</strong> ${question["题目"]}</p>
-            <p><strong>答案:</strong> ${question["答案"]}</p>
+            <p><strong>题目:</strong> ${question["题目"].replace(/^"|"$/g, '')}</p>
+            <p><strong>答案:</strong> ${question["答案"].replace(/^"|"$/g, '')}</p>
         `;
         content.appendChild(div);
     });
+
+    // 添加返回按钮
+    const backButton = document.createElement("button");
+    backButton.innerText = "返回";
+    backButton.className = "back-button";
+    backButton.onclick = renderSubCategories;
+    content.appendChild(backButton);
 }
 
 // 初始化
