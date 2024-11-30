@@ -7,7 +7,7 @@ let currentSubCategory = ""; // 当前选择的小分类
 // 加载数据函数
 async function loadData() {
     // 加载大分类和小分类
-    const categoriesResponse = await fetch("categories_and_images.csv");
+    const categoriesResponse = await fetch("categories_and_images_fixed.csv");
     const categoriesText = await categoriesResponse.text();
     categories = parseCSV(categoriesText);
 
