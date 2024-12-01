@@ -7,12 +7,25 @@
     <title>意大利驾照子类别</title>
     <link rel="stylesheet" href="style.css">
     <script defer src="script.js"></script>
+    <style>
+        .tooltip {
+            position: absolute;
+            background-color: yellow;
+            color: black;
+            border: 1px solid black;
+            padding: 5px;
+            z-index: 1000;
+            pointer-events: none; /* 避免悬浮窗本身阻挡鼠标事件 */
+        }
+    </style>
 </head>
 <body>
-    <h1>选择一个子类别</h1>
-    <div id="subcategory-list">
-        <!-- Subcategories will be loaded here dynamically -->
+    <div class="container">
+        <h1>选择一个子类别</h1>
+        <div id="subcategory-list">
+            <!-- Subcategories will be loaded here dynamically -->
+        </div>
+        <button onclick="goBack()">返回</button>
     </div>
-    <button onclick="goBack()">返回</button>
 </body>
 </html>
