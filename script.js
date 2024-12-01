@@ -1,91 +1,85 @@
-// Load categories from JSON file
-function loadCategories() {
-    fetch('categories.json')
-        .then(response => response.json())
-        .then(data => {
-            const categoryList = document.getElementById('category-list');
-            if (categoryList) {
-                // Use a Set to store unique categories
-                const uniqueCategories = new Set();
-                data.forEach((category) => {
-                    uniqueCategories.add(category['大分类']);
-                });
-                
-                // Display unique categories
-                Array.from(uniqueCategories).forEach((category, index) => {
-                    const categoryElement = document.createElement('div');
-                    categoryElement.classList.add('category-item');
-                    categoryElement.innerHTML = `<a href="category.html?category=${index}">${category}</a>`;
-                    categoryList.appendChild(categoryElement);
-                });
-            }
-        })
-        .catch(error => console.error('Error loading categories:', error));
-}
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>意大利驾照类别</title>
+    <link rel="stylesheet" href="style.css">
+    <script defer src="script.js"></script>
+</head>
+<body>
+    <h1>选择一个主要类别</h1>
+    <div id="category-list">
+        <!-- Categories will be loaded here dynamically -->
+    </div>
+</body>
+</html>
 
-// Load subcategories from JSON file
-function loadSubcategories() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const categoryIndex = urlParams.get('category');
+<!-- category.html -->
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>意大利驾照子类别</title>
+    <link rel="stylesheet" href="style.css">
+    <script defer src="script.js"></script>
+</head>
+<body>
+    <h1>选择一个子类别</h1>
+    <div id="subcategory-list">
+        <!-- Subcategories will be loaded here dynamically -->
+    </div>
+    <button onclick="goBack()">返回</button>
+</body>
+</html>
 
-    fetch('categories.json')
-        .then(response => response.json())
-        .then(data => {
-            const subcategoryList = document.getElementById('subcategory-list');
-            if (subcategoryList && categoryIndex !== null) {
-                // Get the selected category name
-                const uniqueCategories = Array.from(new Set(data.map(category => category['大分类'])));
-                const selectedCategory = uniqueCategories[categoryIndex];
+<!-- questions.html -->
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>意大利驾照题目</title>
+    <link rel="stylesheet" href="style.css">
+    <script defer src="script.js"></script>
+</head>
+<body>
+    <h1>题目</h1>
+    <div id="questions-list">
+        <!-- Questions will be loaded here dynamically -->
+    </div>
+    <button onclick="goBack()">返回</button>
+</body>
+</html>
 
-                // Filter subcategories by selected category
-                const filteredSubcategories = data.filter(category => category['大分类'] === selectedCategory);
-                filteredSubcategories.forEach((subcategory, index) => {
-                    const subcategoryElement = document.createElement('div');
-                    subcategoryElement.classList.add('subcategory-item');
-                    subcategoryElement.innerHTML = `<a href="questions.html?category=${categoryIndex}&subcategory=${index}">${subcategory['小分类']}</a>`;
-                    subcategoryList.appendChild(subcategoryElement);
-                });
-            }
-        })
-        .catch(error => console.error('Error loading subcategories:', error));
-}
+<script>
+    // Load questions from JSON file
+    function loadQuestions() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const categoryIndex = urlParams.get('category');
+        const subcategoryIndex = urlParams.get('subcategory');
 
-// Load questions from JSON file
-function loadQuestions() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const categoryIndex = urlParams.get('category');
-    const subcategoryIndex = urlParams.get('subcategory');
-
-    fetch('questions.json')
-        .then(response => response.json())
-        .then(data => {
-            const questionsList = document.getElementById('questions-list');
-            if (questionsList) {
-                // Filter questions based on category and subcategory
-                const filteredQuestions = data.filter(question => question['类别'] === subcategoryIndex);
-                filteredQuestions.forEach(question => {
-                    const questionElement = document.createElement('div');
-                    questionElement.classList.add('question-item');
-                    questionElement.innerText = question['题目'];
-                    questionsList.appendChild(questionElement);
-                });
-            }
-        })
-        .catch(error => console.error('Error loading questions:', error));
-}
-
-// Go back to the previous page
-function goBack() {
-    window.history.back();
-}
-
-// Determine which function to call based on the current page
-window.onload = function() {
-    if (document.getElementById('category-list')) {
-        loadCategories();
-    } else if (document.getElementById('subcategory-list')) {
-        loadSubcategories();
-    } else if (document.getElementById('questions-list')) {
-        loadQuestions();
+        fetch('questions.json')
+            .then(response => response.json())
+            .then(data => {
+                const questionsList = document.getElementById('questions-list');
+                if (questionsList) {
+                    // Filter questions based on category and subcategory
+                    const filteredQuestions = data.filter(question => question['类别'] === categoryIndex && question['小分类索引'] == subcategoryIndex);
+                    filteredQuestions.forEach(question => {
+                        const questionElement = document.createElement('div');
+                        questionElement.classList.add('question-item');
+                        questionElement.innerText = question['题目'];
+                        questionsList.appendChild(questionElement);
+                    });
+                }
+            })
+            .catch(error => console.error('Error loading questions:', error));
     }
-};
+
+    // Call the loadQuestions function
+    window.onload = function() {
+        loadQuestions();
+    };
+</script>
