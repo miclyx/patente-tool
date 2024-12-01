@@ -1,3 +1,23 @@
+    let wordsTranslation = {};
+    let phrasesTranslation = {};
+
+    // Load translations from JSON files
+    function loadTranslations() {
+        fetch('translated_words.json')
+            .then(response => response.json())
+            .then(data => {
+                wordsTranslation = data;
+            })
+            .catch(error => console.error('Error loading words translation:', error));
+
+        fetch('translated_phrases.json')
+            .then(response => response.json())
+            .then(data => {
+                phrasesTranslation = data;
+            })
+            .catch(error => console.error('Error loading phrases translation:', error));
+    }
+
     // Load categories from JSON file
     function loadCategories() {
         fetch('categories.json')
@@ -74,10 +94,11 @@
                     // Filter questions based on selected subcategory
                     const filteredQuestions = data.filter(question => question['类别'] === subcategory);
                     filteredQuestions.forEach(question => {
+                        const questionTextWithTranslation = addTranslationToText(question['题目']);
                         const questionElement = document.createElement('div');
                         questionElement.classList.add('question-item');
                         questionElement.innerHTML = `
-                            <p>${question['题目']}</p>
+                            <p>${questionTextWithTranslation}</p>
                             <button onclick="toggleAnswer(this)">显示答案</button>
                             <div class="answer" style="display: none;">${question['答案']}</div>
                         `;
@@ -86,6 +107,30 @@
                 }
             })
             .catch(error => console.error('Error loading questions:', error));
+    }
+
+    // Add translation functionality to text
+    function addTranslationToText(text) {
+        let updatedText = text;
+
+        // Replace phrases with clickable translations
+        phrasesTranslation.forEach(phrase => {
+            const regex = new RegExp(`\b${phrase['短语']}\b`, 'g');
+            updatedText = updatedText.replace(regex, `<span class="translatable" onclick="showTranslation('${phrase['短语']}', '${phrase['翻译']}')">${phrase['短语']}</span>`);
+        });
+
+        // Replace words with clickable translations
+        wordsTranslation.forEach(word => {
+            const regex = new RegExp(`\b${word['单词']}\b`, 'g');
+            updatedText = updatedText.replace(regex, `<span class="translatable" onclick="showTranslation('${word['单词']}', '${word['翻译']}')">${word['单词']}</span>`);
+        });
+
+        return updatedText;
+    }
+
+    // Show translation
+    function showTranslation(original, translation) {
+        alert(`${original} 的翻译是: ${translation}`);
     }
 
     // Toggle answer visibility
@@ -107,6 +152,7 @@
 
     // Determine which function to call based on the current page
     window.onload = function() {
+        loadTranslations();
         if (document.getElementById('category-list')) {
             loadCategories();
         } else if (document.getElementById('subcategory-list')) {
