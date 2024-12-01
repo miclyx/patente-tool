@@ -134,8 +134,8 @@
     function showTooltip(event, translation) {
         const tooltip = document.getElementById('tooltip');
         tooltip.innerText = translation;
-        tooltip.style.left = event.pageX + 'px';
-        tooltip.style.top = (event.pageY - 30) + 'px';
+        tooltip.style.left = event.pageX + 10 + 'px';
+        tooltip.style.top = event.pageY + 10 + 'px';
         tooltip.style.display = 'block';
     }
 
