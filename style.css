@@ -6,3 +6,11 @@ body {
 .category-item, .subcategory-item, .question-item {
     margin: 10px 0;
 }
+.container {
+    max-width: 800px;  /* 控制页面宽度 */
+    margin: 0 auto;  /* 上下保持不变，左右居中 */
+    padding: 20px;  /* 给容器增加一些内边距 */
+    background-color: #f9f9f9;  /* 设置一个背景色，让页面看起来更柔和 */
+    border-radius: 10px;  /* 让容器的边缘圆滑 */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);  /* 给容器增加阴影效果 */
+}
