@@ -76,12 +76,28 @@
                     filteredQuestions.forEach(question => {
                         const questionElement = document.createElement('div');
                         questionElement.classList.add('question-item');
-                        questionElement.innerText = question['题目'];
+                        questionElement.innerHTML = `
+                            <p>${question['题目']}</p>
+                            <button onclick="toggleAnswer(this)">显示答案</button>
+                            <div class="answer" style="display: none;">${question['答案']}</div>
+                        `;
                         questionsList.appendChild(questionElement);
                     });
                 }
             })
             .catch(error => console.error('Error loading questions:', error));
+    }
+
+    // Toggle answer visibility
+    function toggleAnswer(button) {
+        const answerDiv = button.nextElementSibling;
+        if (answerDiv.style.display === 'none') {
+            answerDiv.style.display = 'block';
+            button.innerText = '隐藏答案';
+        } else {
+            answerDiv.style.display = 'none';
+            button.innerText = '显示答案';
+        }
     }
 
     // Go back to the previous page
