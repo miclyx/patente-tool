@@ -1,7 +1,5 @@
-<script>
     let wordsTranslation = [];
     let phrasesTranslation = [];
-    let translationMode = 'words'; // 默认翻译模式为单词
 
     // Load translations from JSON files
     function loadTranslations() {
@@ -120,31 +118,20 @@
             // 去除标点符号
             let cleanWord = word.replace(/[.,?!;:()]/g, '');
             
-            // 查找翻译（短语优先）
-            let phraseTranslation = phrasesTranslation.find(phrase => phrase['原文'] === cleanWord);
+            // 查找翻译
             let wordTranslation = wordsTranslation.find(item => item['原文'] === cleanWord);
+            let phraseTranslation = phrasesTranslation.find(phrase => phrase['原文'] === cleanWord);
 
-            if (phraseTranslation) {
-                return `<span class="translatable" onmouseover="showTooltip(event, '${phraseTranslation['翻译']}')" onmouseout="hideTooltip()">${word}</span>`;
-            } else if (wordTranslation) {
+            if (wordTranslation) {
                 return `<span class="translatable" onmouseover="showTooltip(event, '${wordTranslation['翻译']}')" onmouseout="hideTooltip()">${word}</span>`;
+            } else if (phraseTranslation) {
+                return `<span class="translatable" onmouseover="showTooltip(event, '${phraseTranslation['翻译']}')" onmouseout="hideTooltip()">${word}</span>`;
             } else {
                 return word;
             }
         });
 
         return updatedWords.join(' ');  // 将更新后的单词数组重新组合成句子
-    }
-
-    // Toggle translation mode
-    function toggleTranslationMode() {
-        if (translationMode === 'words') {
-            translationMode = 'phrases';
-        } else {
-            translationMode = 'words';
-        }
-        document.getElementById('questions-list').innerHTML = '';
-        loadQuestions();
     }
 
     // Show tooltip for translation
