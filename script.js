@@ -96,11 +96,10 @@
                     // Filter questions based on selected subcategory
                     const filteredQuestions = data.filter(question => question['类别'] === subcategory);
                     filteredQuestions.forEach(question => {
-                        const questionTextWithTranslation = addTranslationToText(question['题目']);
                         const questionElement = document.createElement('div');
                         questionElement.classList.add('question-item');
                         questionElement.innerHTML = `
-                            <p>${questionTextWithTranslation}</p>
+                            <p>${question['题目']}</p>
                             <button onclick="toggleAnswer(this)">显示答案</button>
                             <div class="answer" style="display: none;">${question['答案']}</div>
                         `;
@@ -109,44 +108,6 @@
                 }
             })
             .catch(error => console.error('Error loading questions:', error));
-    }
-
-    // Add translation functionality with hover effect
-    function addTranslationToText(text) {
-        let words = text.split(' ');  // 将句子拆分为单词数组
-        let updatedWords = words.map(word => {
-            // 去除标点符号
-            let cleanWord = word.replace(/[.,?!;:()]/g, '');
-            
-            // 查找翻译
-            let wordTranslation = wordsTranslation.find(item => item['原文'] === cleanWord);
-            let phraseTranslation = phrasesTranslation.find(phrase => phrase['原文'] === cleanWord);
-
-            if (wordTranslation) {
-                return `<span class="translatable" onmouseover="showTooltip(event, '${wordTranslation['翻译']}')" onmouseout="hideTooltip()">${word}</span>`;
-            } else if (phraseTranslation) {
-                return `<span class="translatable" onmouseover="showTooltip(event, '${phraseTranslation['翻译']}')" onmouseout="hideTooltip()">${word}</span>`;
-            } else {
-                return word;
-            }
-        });
-
-        return updatedWords.join(' ');  // 将更新后的单词数组重新组合成句子
-    }
-
-    // Show tooltip for translation
-    function showTooltip(event, translation) {
-        const tooltip = document.getElementById('tooltip');
-        tooltip.innerText = translation;
-        tooltip.style.left = event.pageX + 10 + 'px';
-        tooltip.style.top = event.pageY + 10 + 'px';
-        tooltip.style.display = 'block';
-    }
-
-    // Hide tooltip for translation
-    function hideTooltip() {
-        const tooltip = document.getElementById('tooltip');
-        tooltip.style.display = 'none';
     }
 
     // Toggle answer visibility
