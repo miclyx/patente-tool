@@ -1,0 +1,8 @@
+body {
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+}
+
+.category-item, .subcategory-item, .question-item {
+    margin: 10px 0;
+}
