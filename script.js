@@ -38,8 +38,7 @@
                     filteredSubcategories.forEach((subcategory, index) => {
                         const subcategoryElement = document.createElement('div');
                         subcategoryElement.classList.add('subcategory-item');
-                        subcategoryElement.innerHTML = `<a href="questions_words.html?subcategory=${encodeURIComponent(subcategory['小分类'])}">${subcategory['小分类']}</a>`;
-                        subcategoryElement.innerHTML += ` | <a href="questions_phrases.html?subcategory=${encodeURIComponent(subcategory['小分类'])}">查看短语翻译题目</a>`;
+                        subcategoryElement.innerHTML = `<a href="questions.html?subcategory=${encodeURIComponent(subcategory['小分类'])}">${subcategory['小分类']}</a>`;
                         subcategoryList.appendChild(subcategoryElement);
                     });
                 }
@@ -51,7 +50,6 @@
     function loadQuestions() {
         const urlParams = new URLSearchParams(window.location.search);
         const subcategory = urlParams.get('subcategory');
-        const pageType = document.title.includes('单词翻译') ? 'words' : 'phrases';
 
         fetch('categories.json')
             .then(response => response.json())
@@ -78,9 +76,8 @@
                     filteredQuestions.forEach(question => {
                         const questionElement = document.createElement('div');
                         questionElement.classList.add('question-item');
-                        const questionText = pageType === 'words' ? addWordTranslationToText(question['题目']) : addPhraseTranslationToText(question['题目']);
                         questionElement.innerHTML = `
-                            <p>${questionText}</p>
+                            <p>${question['题目']}</p>
                             <button onclick="toggleAnswer(this)">显示答案</button>
                             <div class="answer" style="display: none;">${question['答案']}</div>
                         `;
@@ -106,60 +103,6 @@
     // Go back to the previous page
     function goBack() {
         window.history.back();
-    }
-
-    // Add word translation to text with hover effect
-    function addWordTranslationToText(text) {
-        let words = text.split(' ');  // 将句子拆分为单词数组
-        let updatedWords = words.map(word => {
-            // 去除标点符号
-            let cleanWord = word.replace(/[.,?!;:()]/g, '');
-
-            // 查找单词翻译
-            let wordTranslation = wordsTranslation.find(item => item['原文'] === cleanWord);
-
-            if (wordTranslation) {
-                return `<span class="translatable" style="text-decoration: underline; cursor: pointer;" onmouseover="showTooltip(event, '${wordTranslation['翻译']}')" onmouseout="hideTooltip()">${word}</span>`;
-            } else {
-                return word;
-            }
-        });
-
-        return updatedWords.join(' ');  // 将更新后的单词数组重新组合成句子
-    }
-
-    // Add phrase translation to text with hover effect
-    function addPhraseTranslationToText(text) {
-        let updatedText = text;
-
-        // Replace phrases with hoverable translations
-        phrasesTranslation.forEach(phrase => {
-            const regex = new RegExp(`\b${phrase['原文']}\b`, 'g');
-            updatedText = updatedText.replace(regex, `<span class="translatable" style="text-decoration: underline; cursor: pointer;" onmouseover="showTooltip(event, '${phrase['翻译']}')" onmouseout="hideTooltip()">${phrase['原文']}</span>`);
-        });
-
-        return updatedText;
-    }
-
-    // Show tooltip with translation
-    function showTooltip(event, translation) {
-        const tooltip = document.createElement('div');
-        tooltip.className = 'tooltip';
-        tooltip.innerText = translation;
-        document.body.appendChild(tooltip);
-        
-        const xOffset = 15;
-        const yOffset = 15;
-        tooltip.style.left = event.pageX + xOffset + 'px';
-        tooltip.style.top = event.pageY + yOffset + 'px';
-    }
-
-    // Hide tooltip
-    function hideTooltip() {
-        const tooltip = document.querySelector('.tooltip');
-        if (tooltip) {
-            tooltip.remove();
-        }
     }
 
     // Determine which function to call based on the current page
