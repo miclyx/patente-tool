@@ -122,7 +122,8 @@
     }
 
     // Show tooltip with translation
-    function showTooltip(event, translation) {
+console.log('Tooltip triggered')    
+function showTooltip(event, translation) {
         const tooltip = document.createElement('div');
         tooltip.className = 'tooltip';
         tooltip.innerText = translation;
