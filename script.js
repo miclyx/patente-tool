@@ -96,10 +96,11 @@
                     // Filter questions based on selected subcategory
                     const filteredQuestions = data.filter(question => question['类别'] === subcategory);
                     filteredQuestions.forEach(question => {
+                        const questionTextWithTranslation = addTranslationToText(question['题目']);
                         const questionElement = document.createElement('div');
                         questionElement.classList.add('question-item');
                         questionElement.innerHTML = `
-                            <p>${question['题目']}</p>
+                            <p>${questionTextWithTranslation}</p>
                             <button onclick="toggleAnswer(this)">显示答案</button>
                             <div class="answer" style="display: none;">${question['答案']}</div>
                         `;
@@ -108,6 +109,40 @@
                 }
             })
             .catch(error => console.error('Error loading questions:', error));
+    }
+
+    // Add translation functionality with hover effect
+    function addTranslationToText(text) {
+        let updatedText = text;
+
+        // Replace phrases with hoverable translations
+        phrasesTranslation.forEach(phrase => {
+            const regex = new RegExp(`\b${phrase['原文']}\b`, 'g');
+            updatedText = updatedText.replace(regex, `<span class="translatable" onmouseover="showTooltip(event, '${phrase['翻译']}')" onmouseout="hideTooltip()">${phrase['原文']}</span>`);
+        });
+
+        // Replace words with hoverable translations
+        wordsTranslation.forEach(word => {
+            const regex = new RegExp(`\b${word['原文']}\b`, 'g');
+            updatedText = updatedText.replace(regex, `<span class="translatable" onmouseover="showTooltip(event, '${word['翻译']}')" onmouseout="hideTooltip()">${word['原文']}</span>`);
+        });
+
+        return updatedText;
+    }
+
+    // Show tooltip for translation
+    function showTooltip(event, translation) {
+        const tooltip = document.getElementById('tooltip');
+        tooltip.innerText = translation;
+        tooltip.style.left = event.pageX + 'px';
+        tooltip.style.top = (event.pageY - 30) + 'px';
+        tooltip.style.display = 'block';
+    }
+
+    // Hide tooltip for translation
+    function hideTooltip() {
+        const tooltip = document.getElementById('tooltip');
+        tooltip.style.display = 'none';
     }
 
     // Toggle answer visibility
