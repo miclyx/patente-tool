@@ -122,8 +122,7 @@
     }
 
     // Show tooltip with translation
-console.log('Tooltip triggered')    
-function showTooltip(event, translation) {
+    function showTooltip(event, translation) {
         const tooltip = document.createElement('div');
         tooltip.className = 'tooltip';
         tooltip.innerText = translation;
@@ -158,6 +157,15 @@ function showTooltip(event, translation) {
     // Go back to the previous page
     function goBack() {
         window.history.back();
+    }
+
+    // Switch to phrase translation page
+    function switchToPhraseTranslation() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const subcategory = urlParams.get('subcategory');
+        if (subcategory) {
+            window.location.href = `questions_phrases.html?subcategory=${encodeURIComponent(subcategory)}`;
+        }
     }
 
     // Determine which function to call based on the current page
