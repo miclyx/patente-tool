@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Italian Driving License Subcategories</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>Choose a Subcategory</h1>
+    <div id="subcategory-list">
+        <!-- Subcategories will be loaded here dynamically -->
+    </div>
+    <button onclick="goBack()">Back</button>
+
+    <script>
+        // Get category index from URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const categoryIndex = urlParams.get('category');
+
+        // Define subcategories for each main category
+        const subcategories = [
+            [
+                "Carreggiata a doppio senso di circolazione",
+                "Strada a tre corsie per ogni senso di marcia",
+                "Strada a tre carreggiate",
+                "Attraversamento pedonale",
+                "Strade extraurbane principali"
+            ],
+            [
+                "Segnale di stop",
+                "Segnale di precedenza",
+                "Segnale di divieto",
+                "Segnale di obbligo",
+                "Segnale di pericolo"
+            ],
+            [
+                "Precedenza a destra",
+                "Precedenza ai veicoli in arrivo",
+                "Rotatoria",
+                "Incrocio con semaforo",
+                "Segnaletica orizzontale"
+            ],
+            [
+                "Limiti di velocità in città",
+                "Limiti di velocità su strade extraurbane",
+                "Limiti di velocità in autostrada",
+                "Segnaletica di limite",
+                "Zone a traffico limitato"
+            ],
+            [
+                "Sicurezza delle cinture",
+                "Airbag",
+                "Controllo dei freni",
+                "Sistemi di sicurezza elettronici",
+                "Verifica degli pneumatici"
+            ]
+        ];
+
+        // Load subcategories dynamically into the subcategory list
+        const subcategoryList = document.getElementById('subcategory-list');
+        if (categoryIndex !== null && subcategories[categoryIndex]) {
+            subcategories[categoryIndex].forEach((subcategory, index) => {
+                const subcategoryElement = document.createElement('div');
+                subcategoryElement.classList.add('subcategory-item');
+                subcategoryElement.innerHTML = `<a href="questions.html?category=${categoryIndex}&subcategory=${index}">${subcategory}</a>`;
+                subcategoryList.appendChild(subcategoryElement);
+            });
+        }
+
+        // Go back to the previous page
+        function goBack() {
+            window.history.back();
+        }
+    </script>
+</body>
+</html>
