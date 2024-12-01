@@ -1,5 +1,7 @@
+<script>
     let wordsTranslation = [];
     let phrasesTranslation = [];
+    let translationMode = 'words'; // 默认翻译模式为单词
 
     // Load translations from JSON files
     function loadTranslations() {
@@ -112,34 +114,45 @@
     }
 
     // Add translation functionality with hover effect
-function addTranslationToText(text) {
-    let words = text.split(' ');  // 将句子拆分为单词数组
-    let updatedWords = words.map(word => {
-        // 去除标点符号
-        let cleanWord = word.replace(/[.,?!;:()]/g, '');
-        
-        // 查找翻译（短语优先）
-        let phraseTranslation = phrasesTranslation.find(phrase => phrase['原文'] === cleanWord);
-        let wordTranslation = wordsTranslation.find(item => item['原文'] === cleanWord);
+    function addTranslationToText(text) {
+        let words = text.split(' ');  // 将句子拆分为单词数组
+        let updatedWords = words.map(word => {
+            // 去除标点符号
+            let cleanWord = word.replace(/[.,?!;:()]/g, '');
+            
+            // 查找翻译（短语优先）
+            let phraseTranslation = phrasesTranslation.find(phrase => phrase['原文'] === cleanWord);
+            let wordTranslation = wordsTranslation.find(item => item['原文'] === cleanWord);
 
-        if (phraseTranslation) {
-            return `<span class="translatable" onmouseover="showTooltip(event, '${phraseTranslation['翻译']}')" onmouseout="hideTooltip()">${word}</span>`;
-        } else if (wordTranslation) {
-            return `<span class="translatable" onmouseover="showTooltip(event, '${wordTranslation['翻译']}')" onmouseout="hideTooltip()">${word}</span>`;
+            if (phraseTranslation) {
+                return `<span class="translatable" onmouseover="showTooltip(event, '${phraseTranslation['翻译']}')" onmouseout="hideTooltip()">${word}</span>`;
+            } else if (wordTranslation) {
+                return `<span class="translatable" onmouseover="showTooltip(event, '${wordTranslation['翻译']}')" onmouseout="hideTooltip()">${word}</span>`;
+            } else {
+                return word;
+            }
+        });
+
+        return updatedWords.join(' ');  // 将更新后的单词数组重新组合成句子
+    }
+
+    // Toggle translation mode
+    function toggleTranslationMode() {
+        if (translationMode === 'words') {
+            translationMode = 'phrases';
         } else {
-            return word;
+            translationMode = 'words';
         }
-    });
-
-    return updatedWords.join(' ');  // 将更新后的单词数组重新组合成句子
-}
+        document.getElementById('questions-list').innerHTML = '';
+        loadQuestions();
+    }
 
     // Show tooltip for translation
     function showTooltip(event, translation) {
         const tooltip = document.getElementById('tooltip');
         tooltip.innerText = translation;
-        tooltip.style.left = event.pageX + 'px';
-        tooltip.style.top = (event.pageY - 30) + 'px';
+        tooltip.style.left = event.pageX + 10 + 'px';
+        tooltip.style.top = event.pageY + 10 + 'px';
         tooltip.style.display = 'block';
     }
 
