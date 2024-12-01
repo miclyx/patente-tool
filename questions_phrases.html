@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>意大利驾照题目 - 短语翻译</title>
+    <link rel="stylesheet" href="style.css">
+    <script defer src="script.js"></script>
+</head>
+<body>
+    <h1>题目 - 短语翻译</h1>
+    <button onclick="switchToWords()">切换到单词翻译</button>
+    <div id="image-container">
+        <!-- Image related to the subcategory will be loaded here dynamically -->
+    </div>
+    <div id="questions-list">
+        <!-- Questions will be loaded here dynamically -->
+    </div>
+    <button onclick="goBack()">返回</button>
+</body>
+</html>
+
+<script>
+    // Load questions with phrase translations from JSON file
+    function loadQuestions() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const subcategory = urlParams.get('subcategory');
+
+        fetch('categories.json')
+            .then(response => response.json())
+            .then(data => {
+                // Load the related image based on the selected subcategory
+                const subcategoryData = data.find(item => item['小分类'] === subcategory);
+                if (subcategoryData && subcategoryData['图片'] !== '无图片') {
+                    const imageContainer = document.getElementById('image-container');
+                    const imgElement = document.createElement('img');
+                    imgElement.src = `images/${subcategoryData['图片']}`;
+                    imgElement.alt = subcategory;
+                    imageContainer.appendChild(imgElement);
+                }
+            })
+            .catch(error => console.error('Error loading categories for image:', error));
+
+        fetch('questions.json')
+            .then(response => response.json())
+            .then(data => {
+                const questionsList = document.getElementById('questions-list');
+                if (questionsList) {
+                    // Filter questions based on selected subcategory
+                    const filteredQuestions = data.filter(question => question['类别'] === subcategory);
+                    filteredQuestions.forEach(question => {
+                        const questionElement = document.createElement('div');
+                        questionElement.classList.add('question-item');
+                        questionElement.innerHTML = `
+                            <p>${addPhraseTranslationToText(question['题目'])}</p>
+                            <button onclick="toggleAnswer(this)">显示答案</button>
+                            <div class="answer" style="display: none;">${question['答案']}</div>
+                        `;
+                        questionsList.appendChild(questionElement);
+                    });
+                }
+            })
+            .catch(error => console.error('Error loading questions:', error));
+    }
+
+    // Add phrase translation to text with hover effect
+    function addPhraseTranslationToText(text) {
+        let updatedText = text;
+
+        // Replace phrases with hoverable translations
+        phrasesTranslation.forEach(phrase => {
+            const regex = new RegExp(`\\b${phrase['原文']}\\b`, 'g');
+            updatedText = updatedText.replace(regex, `<span class="translatable" onmouseover="showTooltip(event, '${phrase['翻译']}')" onmouseout="hideTooltip()">${phrase['原文']}</span>`);
+        });
+
+        return updatedText;
+    }
+
+    // Switch to words translation page
+    function switchToWords() {
+        const currentUrlParams = new URLSearchParams(window.location.search);
+        const subcategory = currentUrlParams.get('subcategory');
+        window.location.href = `questions_words.html?subcategory=${encodeURIComponent(subcategory)}`;
+    }
+</script>
