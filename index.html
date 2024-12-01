@@ -5,27 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>意大利驾照类别</title>
     <link rel="stylesheet" href="style.css">
+    <script defer src="script.js"></script>
 </head>
 <body>
     <h1>选择一个主要类别</h1>
     <div id="category-list">
         <!-- Categories will be loaded here dynamically -->
     </div>
-    
-    <script>
-        // Load categories from JSON file
-        fetch('categories.json')
-            .then(response => response.json())
-            .then(data => {
-                const categoryList = document.getElementById('category-list');
-                data.forEach((category, index) => {
-                    const categoryElement = document.createElement('div');
-                    categoryElement.classList.add('category-item');
-                    categoryElement.innerHTML = `<a href="category.html?category=${index}">${category['大分类']}</a>`;
-                    categoryList.appendChild(categoryElement);
-                });
-            })
-            .catch(error => console.error('Error loading categories:', error));
-    </script>
 </body>
 </html>
