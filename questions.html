@@ -19,31 +19,20 @@
         const categoryIndex = urlParams.get('category');
         const subcategoryIndex = urlParams.get('subcategory');
 
-        // Define questions for each subcategory (Italian)
-        const questions = [
-            [
-                [
-                    "In una carreggiata del tipo rappresentato si può...",
-                    "La carreggiata del tipo rappresentato è a doppio senso..."
-                ],
-                [
-                    "Il segnale di stop indica...",
-                    "È obbligatorio fermarsi al segnale di precedenza..."
-                ]
-            ],
-            // Add more questions for other subcategories as needed
-        ];
-
-        // Load questions dynamically into the questions list
-        const questionsList = document.getElementById('questions-list');
-        if (categoryIndex !== null && subcategoryIndex !== null && questions[categoryIndex] && questions[categoryIndex][subcategoryIndex]) {
-            questions[categoryIndex][subcategoryIndex].forEach((question) => {
-                const questionElement = document.createElement('div');
-                questionElement.classList.add('question-item');
-                questionElement.innerText = question;
-                questionsList.appendChild(questionElement);
-            });
-        }
+        // Load questions from JSON file
+        fetch('questions.json')
+            .then(response => response.json())
+            .then(data => {
+                const questionsList = document.getElementById('questions-list');
+                const filteredQuestions = data.filter(question => question['类别'] === subcategoryIndex);
+                filteredQuestions.forEach(question => {
+                    const questionElement = document.createElement('div');
+                    questionElement.classList.add('question-item');
+                    questionElement.innerText = question['题目'];
+                    questionsList.appendChild(questionElement);
+                });
+            })
+            .catch(error => console.error('Error loading questions:', error));
 
         // Go back to the previous page
         function goBack() {
