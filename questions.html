@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Italian Driving License Questions</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>Questions</h1>
+    <div id="questions-list">
+        <!-- Questions will be loaded here dynamically -->
+    </div>
+    <button onclick="goBack()">Back</button>
+
+    <script>
+        // Get category and subcategory index from URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const categoryIndex = urlParams.get('category');
+        const subcategoryIndex = urlParams.get('subcategory');
+
+        // Define questions for each subcategory
+        const questions = [
+            [
+                [
+                    "In una carreggiata del tipo rappresentato si può...",
+                    "La carreggiata del tipo rappresentato è a doppio senso..."
+                ],
+                [
+                    "Il segnale di stop indica...",
+                    "È obbligatorio fermarsi al segnale di precedenza..."
+                ]
+            ],
+            // Add more questions for other subcategories as needed
+        ];
+
+        // Load questions dynamically into the questions list
+        const questionsList = document.getElementById('questions-list');
+        if (categoryIndex !== null && subcategoryIndex !== null && questions[categoryIndex] && questions[categoryIndex][subcategoryIndex]) {
+            questions[categoryIndex][subcategoryIndex].forEach((question) => {
+                const questionElement = document.createElement('div');
+                questionElement.classList.add('question-item');
+                questionElement.innerText = question;
+                questionsList.appendChild(questionElement);
+            });
+        }
+
+        // Go back to the previous page
+        function goBack() {
+            window.history.back();
+        }
+    </script>
+</body>
+</html>
