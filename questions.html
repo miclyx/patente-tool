@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>意大利驾照题目</title>
     <link rel="stylesheet" href="style.css">
+    <script defer src="script.js"></script>
 </head>
 <body>
     <h1>题目</h1>
@@ -12,32 +13,5 @@
         <!-- Questions will be loaded here dynamically -->
     </div>
     <button onclick="goBack()">返回</button>
-
-    <script>
-        // Get category and subcategory index from URL parameters
-        const urlParams = new URLSearchParams(window.location.search);
-        const categoryIndex = urlParams.get('category');
-        const subcategoryIndex = urlParams.get('subcategory');
-
-        // Load questions from JSON file
-        fetch('questions.json')
-            .then(response => response.json())
-            .then(data => {
-                const questionsList = document.getElementById('questions-list');
-                const filteredQuestions = data.filter(question => question['类别'] === subcategoryIndex);
-                filteredQuestions.forEach(question => {
-                    const questionElement = document.createElement('div');
-                    questionElement.classList.add('question-item');
-                    questionElement.innerText = question['题目'];
-                    questionsList.appendChild(questionElement);
-                });
-            })
-            .catch(error => console.error('Error loading questions:', error));
-
-        // Go back to the previous page
-        function goBack() {
-            window.history.back();
-        }
-    </script>
 </body>
 </html>
