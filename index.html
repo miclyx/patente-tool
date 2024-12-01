@@ -13,23 +13,19 @@
     </div>
     
     <script>
-        // Define categories (Italian)
-        const categories = [
-            "Definizioni generali e doveri nell'uso della strada",
-            "Segnali stradali",
-            "Norme sulla precedenza",
-            "Limiti di velocità",
-            "Sicurezza dei veicoli"
-        ];
-
-        // Load categories dynamically into the category list
-        const categoryList = document.getElementById('category-list');
-        categories.forEach((category, index) => {
-            const categoryElement = document.createElement('div');
-            categoryElement.classList.add('category-item');
-            categoryElement.innerHTML = `<a href="category.html?category=${index}">${category}</a>`;
-            categoryList.appendChild(categoryElement);
-        });
+        // Load categories from JSON file
+        fetch('categories.json')
+            .then(response => response.json())
+            .then(data => {
+                const categoryList = document.getElementById('category-list');
+                data.forEach((category, index) => {
+                    const categoryElement = document.createElement('div');
+                    categoryElement.classList.add('category-item');
+                    categoryElement.innerHTML = `<a href="category.html?category=${index}">${category['大分类']}</a>`;
+                    categoryList.appendChild(categoryElement);
+                });
+            })
+            .catch(error => console.error('Error loading categories:', error));
     </script>
 </body>
 </html>
