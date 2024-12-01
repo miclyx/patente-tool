@@ -112,12 +112,12 @@
     }
 
     // Add translation functionality with hover effect
-    function addTranslationToText(text) {
+function addTranslationToText(text) {
     let words = text.split(' ');  // 将句子拆分为单词数组
     let updatedWords = words.map(word => {
         // 去除标点符号
         let cleanWord = word.replace(/[.,?!;:()]/g, '');
-        
+
         // 查找翻译（短语优先）
         let phraseTranslation = phrasesTranslation.find(phrase => phrase['原文'] === cleanWord);
         let wordTranslation = wordsTranslation.find(item => item['原文'] === cleanWord);
