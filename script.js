@@ -51,15 +51,20 @@
         const urlParams = new URLSearchParams(window.location.search);
         const subcategory = urlParams.get('subcategory');
 
-        // Load the related image
-        if (subcategory) {
-            const imageContainer = document.getElementById('image-container');
-            const imgElement = document.createElement('img');
-            const imageName = subcategory.replace(/\s+/g, '_').replace('/', '_') + '.png';  // Assuming images are saved with underscores and .png extension
-            imgElement.src = `images/${imageName}`;
-            imgElement.alt = subcategory;
-            imageContainer.appendChild(imgElement);
-        }
+        fetch('categories.json')
+            .then(response => response.json())
+            .then(data => {
+                // Load the related image based on the selected subcategory
+                const subcategoryData = data.find(item => item['小分类'] === subcategory);
+                if (subcategoryData && subcategoryData['图片'] !== '无图片') {
+                    const imageContainer = document.getElementById('image-container');
+                    const imgElement = document.createElement('img');
+                    imgElement.src = `images/${subcategoryData['图片']}`;
+                    imgElement.alt = subcategory;
+                    imageContainer.appendChild(imgElement);
+                }
+            })
+            .catch(error => console.error('Error loading categories for image:', error));
 
         fetch('questions.json')
             .then(response => response.json())
@@ -94,4 +99,3 @@
             loadQuestions();
         }
     };
-</script>
