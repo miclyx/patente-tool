@@ -6,22 +6,64 @@
         fetch('translated_words.json')
             .then(response => response.json())
             .then(data => {
-                wordsTranslation = Array.isArray(data) ? data : [];
+                wordsTranslation = data;
             })
-            .catch(error => {
-                console.error('Error loading words translation:', error);
-                wordsTranslation = [];
-            });
+            .catch(error => console.error('Error loading words translation:', error));
 
         fetch('translated_phrases.json')
             .then(response => response.json())
             .then(data => {
-                phrasesTranslation = Array.isArray(data) ? data : [];
+                phrasesTranslation = data;
             })
-            .catch(error => {
-                console.error('Error loading phrases translation:', error);
-                phrasesTranslation = [];
-            });
+            .catch(error => console.error('Error loading phrases translation:', error));
+    }
+
+    // Load categories from JSON file
+    function loadCategories() {
+        fetch('categories.json')
+            .then(response => response.json())
+            .then(data => {
+                const categoryList = document.getElementById('category-list');
+                if (categoryList) {
+                    // Use a Set to store unique categories
+                    const uniqueCategories = new Set();
+                    data.forEach((category) => {
+                        uniqueCategories.add(category['大分类']);
+                    });
+                    
+                    // Display unique categories
+                    Array.from(uniqueCategories).forEach((category, index) => {
+                        const categoryElement = document.createElement('div');
+                        categoryElement.classList.add('category-item');
+                        categoryElement.innerHTML = `<a href="category.html?category=${encodeURIComponent(category)}">${category}</a>`;
+                        categoryList.appendChild(categoryElement);
+                    });
+                }
+            })
+            .catch(error => console.error('Error loading categories:', error));
+    }
+
+    // Load subcategories from JSON file
+    function loadSubcategories() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const category = urlParams.get('category');
+
+        fetch('categories.json')
+            .then(response => response.json())
+            .then(data => {
+                const subcategoryList = document.getElementById('subcategory-list');
+                if (subcategoryList && category !== null) {
+                    // Filter subcategories by selected category
+                    const filteredSubcategories = data.filter(item => item['大分类'] === category);
+                    filteredSubcategories.forEach((subcategory, index) => {
+                        const subcategoryElement = document.createElement('div');
+                        subcategoryElement.classList.add('subcategory-item');
+                        subcategoryElement.innerHTML = `<a href="questions.html?subcategory=${encodeURIComponent(subcategory['小分类'])}">${subcategory['小分类']}</a>`;
+                        subcategoryList.appendChild(subcategoryElement);
+                    });
+                }
+            })
+            .catch(error => console.error('Error loading subcategories:', error));
     }
 
     // Load questions from JSON file
@@ -67,28 +109,43 @@
             .catch(error => console.error('Error loading questions:', error));
     }
 
-    // Add translation functionality to text
+    // Add translation functionality to text with hover effect
     function addTranslationToText(text) {
         let updatedText = text;
 
-        // Replace phrases with clickable translations
+        // Replace phrases with hoverable translations
         phrasesTranslation.forEach(phrase => {
             const regex = new RegExp(`\\b${phrase['短语']}\\b`, 'g');
-            updatedText = updatedText.replace(regex, `<span class="translatable" onclick="showTranslation('${phrase['短语']}', '${phrase['翻译']}')">${phrase['短语']}</span>`);
+            updatedText = updatedText.replace(regex, `<span class="translatable" onmouseover="showTooltip(this, '${phrase['翻译']}')" onmouseout="hideTooltip()">${phrase['短语']}</span>`);
         });
 
-        // Replace words with clickable translations
+        // Replace words with hoverable translations
         wordsTranslation.forEach(word => {
             const regex = new RegExp(`\\b${word['单词']}\\b`, 'g');
-            updatedText = updatedText.replace(regex, `<span class="translatable" onclick="showTranslation('${word['单词']}', '${word['翻译']}')">${word['单词']}</span>`);
+            updatedText = updatedText.replace(regex, `<span class="translatable" onmouseover="showTooltip(this, '${word['翻译']}')" onmouseout="hideTooltip()">${word['单词']}</span>`);
         });
 
         return updatedText;
     }
 
-    // Show translation
-    function showTranslation(original, translation) {
-        alert(`${original} 的翻译是: ${translation}`);
+    // Show tooltip for translation
+    function showTooltip(element, translation) {
+        let tooltip = document.createElement('div');
+        tooltip.className = 'tooltip';
+        tooltip.innerText = translation;
+        document.body.appendChild(tooltip);
+
+        let rect = element.getBoundingClientRect();
+        tooltip.style.left = rect.left + window.scrollX + 'px';
+        tooltip.style.top = rect.top + window.scrollY - tooltip.offsetHeight + 'px';
+    }
+
+    // Hide tooltip for translation
+    function hideTooltip() {
+        let tooltip = document.querySelector('.tooltip');
+        if (tooltip) {
+            tooltip.remove();
+        }
     }
 
     // Toggle answer visibility
@@ -119,3 +176,15 @@
             loadQuestions();
         }
     };
+</script>
+
+<style>
+    .tooltip {
+        position: absolute;
+        background-color: #333;
+        color: #fff;
+        padding: 5px;
+        border-radius: 5px;
+        z-index: 1000;
+        font-size: 0.8em;
+    }
