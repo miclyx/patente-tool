@@ -1,5 +1,6 @@
     let wordsTranslation = [];
     let phrasesTranslation = [];
+    let translationMode = 'words'; // 默认翻译模式为单词
 
     // Load translations from JSON files
     function loadTranslations() {
@@ -112,36 +113,36 @@
     }
 
     // Add translation functionality with hover effect
-function addTranslationToText(text) {
-    let updatedText = text;
+    function addTranslationToText(text) {
+        let updatedText = text;
 
-    // Replace phrases with hoverable translations first
-    phrasesTranslation.forEach(phrase => {
-        const regex = new RegExp(`\\b${phrase['原文']}\\b`, 'g');
-        updatedText = updatedText.replace(regex, match => {
-            return `<span class="translatable" onmouseover="showTooltip(event, '${phrase['翻译']}')" onmouseout="hideTooltip()">${match}</span>`;
-        });
-    });
-
-    // Split the updated text into words and handle word translations
-    let words = updatedText.split(' ');  // 将句子拆分为单词数组
-    let updatedWords = words.map(word => {
-        // Remove punctuation from the word for matching purposes
-        let cleanWord = word.replace(/[.,?!;:()]/g, '');
-
-        // Find word translation
-        let wordTranslation = wordsTranslation.find(item => item['原文'] === cleanWord);
-
-        if (wordTranslation) {
-            return word.replace(cleanWord, `<span class="translatable" onmouseover="showTooltip(event, '${wordTranslation['翻译']}')" onmouseout="hideTooltip()">${cleanWord}</span>`);
+        if (translationMode === 'phrases') {
+            // Replace phrases with hoverable translations
+            phrasesTranslation.forEach(phrase => {
+                const regex = new RegExp(`\b${phrase['原文']}\b`, 'g');
+                updatedText = updatedText.replace(regex, `<span class="translatable" onmouseover="showTooltip(event, '${phrase['翻译']}')" onmouseout="hideTooltip()">${phrase['原文']}</span>`);
+            });
         } else {
-            return word;
+            // Replace words with hoverable translations
+            wordsTranslation.forEach(word => {
+                const regex = new RegExp(`\b${word['原文']}\b`, 'g');
+                updatedText = updatedText.replace(regex, `<span class="translatable" onmouseover="showTooltip(event, '${word['翻译']}')" onmouseout="hideTooltip()">${word['原文']}</span>`);
+            });
         }
-    });
 
-    return updatedWords.join(' ');  // 将更新后的单词数组重新组合成句子
-}
+        return updatedText;
+    }
 
+    // Toggle translation mode
+    function toggleTranslationMode() {
+        if (translationMode === 'words') {
+            translationMode = 'phrases';
+        } else {
+            translationMode = 'words';
+        }
+        document.getElementById('questions-list').innerHTML = '';
+        loadQuestions();
+    }
 
     // Show tooltip for translation
     function showTooltip(event, translation) {
