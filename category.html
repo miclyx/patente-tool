@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>意大利驾照子类别</title>
     <link rel="stylesheet" href="style.css">
+    <script defer src="script.js"></script>
 </head>
 <body>
     <h1>选择一个子类别</h1>
@@ -12,33 +13,5 @@
         <!-- Subcategories will be loaded here dynamically -->
     </div>
     <button onclick="goBack()">返回</button>
-
-    <script>
-        // Get category index from URL parameters
-        const urlParams = new URLSearchParams(window.location.search);
-        const categoryIndex = urlParams.get('category');
-
-        // Load subcategories from JSON file
-        fetch('categories.json')
-            .then(response => response.json())
-            .then(data => {
-                const subcategoryList = document.getElementById('subcategory-list');
-                if (categoryIndex !== null && data[categoryIndex]) {
-                    const subcategories = data[categoryIndex]['小分类'];
-                    subcategories.forEach((subcategory, index) => {
-                        const subcategoryElement = document.createElement('div');
-                        subcategoryElement.classList.add('subcategory-item');
-                        subcategoryElement.innerHTML = `<a href="questions.html?category=${categoryIndex}&subcategory=${index}">${subcategory}</a>`;
-                        subcategoryList.appendChild(subcategoryElement);
-                    });
-                }
-            })
-            .catch(error => console.error('Error loading subcategories:', error));
-
-        // Go back to the previous page
-        function goBack() {
-            window.history.back();
-        }
-    </script>
 </body>
 </html>
