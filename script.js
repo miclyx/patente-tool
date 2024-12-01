@@ -1,3 +1,16 @@
+    let wordsTranslation = [];  // 全局变量存储单词翻译
+
+    // Load translations from JSON file when the page loads
+    function loadTranslations() {
+        fetch('translated_words.json')
+            .then(response => response.json())
+            .then(data => {
+                wordsTranslation = data;
+                console.log('Words Translation Loaded:', wordsTranslation);  // 输出翻译数据以确认加载
+            })
+            .catch(error => console.error('Error loading translations:', error));
+    }
+
     // Load categories from JSON file
     function loadCategories() {
         fetch('categories.json')
@@ -90,14 +103,6 @@
 
     // Add word translation to text with hover effect
     function addWordTranslationToText(text) {
-        let wordsTranslation = [];
-        fetch('translated_words.json')
-            .then(response => response.json())
-            .then(data => {
-                wordsTranslation = data;
-            })
-            .catch(error => console.error('Error loading translations:', error));
-
         let words = text.split(' ');  // 将句子拆分为单词数组
         let updatedWords = words.map(word => {
             // 去除标点符号
@@ -156,6 +161,7 @@
 
     // Determine which function to call based on the current page
     window.onload = function() {
+        loadTranslations();  // 首先加载翻译数据
         if (document.getElementById('category-list')) {
             loadCategories();
         } else if (document.getElementById('subcategory-list')) {
