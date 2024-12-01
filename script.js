@@ -1,3 +1,25 @@
+    let wordsTranslation = [];
+    let phrasesTranslation = [];
+
+    // Load translations from JSON files
+    function loadTranslations() {
+        fetch('translated_words.json')
+            .then(response => response.json())
+            .then(data => {
+                wordsTranslation = data;
+                console.log('Words Translation Loaded:', wordsTranslation);
+            })
+            .catch(error => console.error('Error loading words translation:', error));
+
+        fetch('translated_phrases.json')
+            .then(response => response.json())
+            .then(data => {
+                phrasesTranslation = data;
+                console.log('Phrases Translation Loaded:', phrasesTranslation);
+            })
+            .catch(error => console.error('Error loading phrases translation:', error));
+    }
+
     // Load categories from JSON file
     function loadCategories() {
         fetch('categories.json')
@@ -107,6 +129,7 @@
 
     // Determine which function to call based on the current page
     window.onload = function() {
+        loadTranslations();
         if (document.getElementById('category-list')) {
             loadCategories();
         } else if (document.getElementById('subcategory-list')) {
