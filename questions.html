@@ -20,15 +20,15 @@
     </style>
 </head>
 <body>
-    <h1>题目</h1>
-        <button onclick="window.location.href='questions_phrases.html?subcategory=' + encodeURIComponent(new URLSearchParams(window.location.search).get('subcategory'))">切换到短语翻译</button>
-    <div id="image-container">
-        <!-- Image related to the subcategory will be loaded here dynamically -->
+    <div class="container">
+        <h1>题目</h1>
+        <div id="image-container">
+            <!-- Image related to the subcategory will be loaded here dynamically -->
+        </div>
+        <div id="questions-list">
+            <!-- Questions will be loaded here dynamically -->
+        </div>
+        <button onclick="goBack()">返回</button>
     </div>
-    <div id="questions-list">
-        <!-- Questions will be loaded here dynamically -->
-    </div>
-
-    <button onclick="goBack()">返回</button>
 </body>
 </html>
