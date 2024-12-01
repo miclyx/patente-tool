@@ -14,3 +14,36 @@ body {
     border-radius: 10px;  /* 让容器的边缘圆滑 */
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);  /* 给容器增加阴影效果 */
 }
+h1 {
+    text-align: center;  /* 让标题在页面中居中 */
+    color: #333;  /* 深灰色，看起来更加温和 */
+    font-weight: bold;  /* 设置为粗体 */
+    margin-bottom: 20px;  /* 给标题下方留一些空隙 */
+}
+button {
+    background-color: #4CAF50;  /* 设置按钮背景色为绿色 */
+    color: white;  /* 按钮文字为白色 */
+    border: none;  /* 去掉默认边框 */
+    padding: 10px 20px;  /* 设置按钮的内边距 */
+    margin-top: 10px;  /* 与其他元素保持一定距离 */
+    cursor: pointer;  /* 鼠标移上去变成手型，提示可以点击 */
+    border-radius: 5px;  /* 圆角按钮 */
+    transition: background-color 0.3s ease;  /* 增加过渡效果，悬停时的变化更自然 */
+}
+
+button:hover {
+    background-color: #45a049;  /* 鼠标悬停时改变按钮背景色 */
+}
+.category-item, .subcategory-item {
+    background-color: #ffffff;  /* 设置白色背景 */
+    padding: 15px;  /* 增加内边距 */
+    margin: 10px 0;  /* 每个类别之间有空隙 */
+    border: 1px solid #ddd;  /* 增加浅灰色的边框 */
+    border-radius: 5px;  /* 边缘圆滑 */
+    transition: transform 0.2s ease;  /* 鼠标悬停时增加效果 */
+}
+
+.category-item:hover, .subcategory-item:hover {
+    transform: scale(1.03);  /* 鼠标悬停时轻微放大 */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);  /* 鼠标悬停时增加阴影效果 */
+}
