@@ -76,16 +76,65 @@
                     filteredQuestions.forEach(question => {
                         const questionElement = document.createElement('div');
                         questionElement.classList.add('question-item');
-                        questionElement.innerHTML = `
+                        questionElement.innerHTML = addWordTranslationToText(`
                             <p>${question['题目']}</p>
                             <button onclick="toggleAnswer(this)">显示答案</button>
                             <div class="answer" style="display: none;">${question['答案']}</div>
-                        `;
+                        `);
                         questionsList.appendChild(questionElement);
                     });
                 }
             })
             .catch(error => console.error('Error loading questions:', error));
+    }
+
+    // Add word translation to text with hover effect
+    function addWordTranslationToText(text) {
+        let wordsTranslation = [];
+        fetch('translated_words.json')
+            .then(response => response.json())
+            .then(data => {
+                wordsTranslation = data;
+            })
+            .catch(error => console.error('Error loading translations:', error));
+
+        let words = text.split(' ');  // 将句子拆分为单词数组
+        let updatedWords = words.map(word => {
+            // 去除标点符号
+            let cleanWord = word.replace(/[.,?!;:()]/g, '');
+
+            // 查找单词翻译
+            let wordTranslation = wordsTranslation.find(item => item['原文'] === cleanWord);
+
+            if (wordTranslation) {
+                return `<span class="translatable" style="text-decoration: underline; cursor: pointer;" onmouseover="showTooltip(event, '${wordTranslation['翻译']}')" onmouseout="hideTooltip()">${word}</span>`;
+            } else {
+                return word;
+            }
+        });
+
+        return updatedWords.join(' ');  // 将更新后的单词数组重新组合成句子
+    }
+
+    // Show tooltip with translation
+    function showTooltip(event, translation) {
+        const tooltip = document.createElement('div');
+        tooltip.className = 'tooltip';
+        tooltip.innerText = translation;
+        document.body.appendChild(tooltip);
+        
+        const xOffset = 15;
+        const yOffset = 15;
+        tooltip.style.left = event.pageX + xOffset + 'px';
+        tooltip.style.top = event.pageY + yOffset + 'px';
+    }
+
+    // Hide tooltip
+    function hideTooltip() {
+        const tooltip = document.querySelector('.tooltip');
+        if (tooltip) {
+            tooltip.remove();
+        }
     }
 
     // Toggle answer visibility
