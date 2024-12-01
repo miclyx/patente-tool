@@ -3,59 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>驾照学习工具</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-            line-height: 1.6;
-        }
-        h1, h2 {
-            text-align: center;
-        }
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-        }
-        .category, .subcategory, .question {
-            cursor: pointer;
-            color: blue;
-            text-decoration: underline;
-            margin: 10px 0;
-        }
-        .category:hover, .subcategory:hover, .question:hover {
-            color: darkblue;
-        }
-        .image-container {
-            text-align: center;
-            margin-top: 20px;
-        }
-        img {
-            max-width: 100%;
-            height: auto;
-        }
-        .back-button {
-            display: block;
-            margin: 20px 0;
-            text-align: center;
-            font-size: 16px;
-            color: white;
-            background-color: blue;
-            padding: 10px;
-            border-radius: 5px;
-            text-decoration: none;
-            width: 100px;
-        }
-        .back-button:hover {
-            background-color: darkblue;
-        }
-    </style>
+    <title>Italian Driving License Categories</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="container">
-        <h1>驾照学习工具</h1>
-        <div id="main-content"></div>
+    <h1>Choose a Main Category</h1>
+    <div id="category-list">
+        <!-- Categories will be loaded here dynamically -->
     </div>
-    <script src="script.js"></script>
+    
+    <script>
+        // Define categories (you could fetch this dynamically if needed)
+        const categories = [
+            "Definizioni generali e doveri nell'uso della strada",
+            "Segnali stradali",
+            "Norme sulla precedenza",
+            "Limiti di velocità",
+            "Sicurezza dei veicoli"
+        ];
+
+        // Load categories dynamically into the category list
+        const categoryList = document.getElementById('category-list');
+        categories.forEach((category, index) => {
+            const categoryElement = document.createElement('div');
+            categoryElement.classList.add('category-item');
+            categoryElement.innerHTML = `<a href="category.html?category=${index}">${category}</a>`;
+            categoryList.appendChild(categoryElement);
+        });
+    </script>
 </body>
 </html>
