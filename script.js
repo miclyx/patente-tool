@@ -1,3 +1,4 @@
+<script>
     let wordsTranslation = [];  // 全局变量存储单词翻译
 
     // Load translations from JSON file when the page loads
@@ -157,15 +158,6 @@
     // Go back to the previous page
     function goBack() {
         window.history.back();
-    }
-
-    // Switch to phrase translation page
-    function switchToPhraseTranslation() {
-        const urlParams = new URLSearchParams(window.location.search);
-        const subcategory = urlParams.get('subcategory');
-        if (subcategory) {
-            window.location.href = `questions_phrases.html?subcategory=${encodeURIComponent(subcategory)}`;
-        }
     }
 
     // Determine which function to call based on the current page
