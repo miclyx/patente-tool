@@ -113,22 +113,27 @@
 
     // Add translation functionality with hover effect
     function addTranslationToText(text) {
-        let updatedText = text;
+    let words = text.split(' ');  // 将句子拆分为单词数组
+    let updatedWords = words.map(word => {
+        // 去除标点符号
+        let cleanWord = word.replace(/[.,?!;:()]/g, '');
+        
+        // 查找翻译（短语优先）
+        let phraseTranslation = phrasesTranslation.find(phrase => phrase['原文'] === cleanWord);
+        let wordTranslation = wordsTranslation.find(item => item['原文'] === cleanWord);
 
-        // Replace phrases with hoverable translations
-        phrasesTranslation.forEach(phrase => {
-            const regex = new RegExp(`\b${phrase['原文']}\\b`, 'g');
-            updatedText = updatedText.replace(regex, `<span class="translatable" onmouseover="showTooltip(event, '${phrase['翻译']}')" onmouseout="hideTooltip()">${phrase['原文']}</span>`);
-        });
+        if (phraseTranslation) {
+            return `<span class="translatable" onmouseover="showTooltip(event, '${phraseTranslation['翻译']}')" onmouseout="hideTooltip()">${word}</span>`;
+        } else if (wordTranslation) {
+            return `<span class="translatable" onmouseover="showTooltip(event, '${wordTranslation['翻译']}')" onmouseout="hideTooltip()">${word}</span>`;
+        } else {
+            return word;
+        }
+    });
 
-        // Replace words with hoverable translations
-        wordsTranslation.forEach(word => {
-            const regex = new RegExp(`\b${word['原文']}\\b`, 'g');
-            updatedText = updatedText.replace(regex, `<span class="translatable" onmouseover="showTooltip(event, '${word['翻译']}')" onmouseout="hideTooltip()">${word['原文']}</span>`);
-        });
+    return updatedWords.join(' ');  // 将更新后的单词数组重新组合成句子
+}
 
-        return updatedText;
-    }
 
     // Show tooltip for translation
     function showTooltip(event, translation) {
