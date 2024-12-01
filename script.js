@@ -23,28 +23,42 @@
             .catch(error => console.error('Error loading categories:', error));
     }
 
-    // Load subcategories from JSON file
-    function loadSubcategories() {
-        const urlParams = new URLSearchParams(window.location.search);
-        const category = urlParams.get('category');
+// Load subcategories from JSON file
+function loadSubcategories() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const category = urlParams.get('category');
 
-        fetch('categories.json')
-            .then(response => response.json())
-            .then(data => {
-                const subcategoryList = document.getElementById('subcategory-list');
-                if (subcategoryList && category !== null) {
-                    // Filter subcategories by selected category
-                    const filteredSubcategories = data.filter(item => item['大分类'] === category);
-                    filteredSubcategories.forEach((subcategory, index) => {
-                        const subcategoryElement = document.createElement('div');
-                        subcategoryElement.classList.add('subcategory-item');
-                        subcategoryElement.innerHTML = `<a href="questions.html?subcategory=${encodeURIComponent(subcategory['小分类'])}">${subcategory['小分类']}</a>`;
-                        subcategoryList.appendChild(subcategoryElement);
-                    });
-                }
-            })
-            .catch(error => console.error('Error loading subcategories:', error));
+    fetch('categories.json')
+        .then(response => response.json())
+        .then(data => {
+            const subcategoryList = document.getElementById('subcategory-list');
+            if (subcategoryList && category !== null) {
+                // Filter subcategories by selected category
+                const filteredSubcategories = data.filter(item => item['大分类'] === category);
+                filteredSubcategories.forEach((subcategory, index) => {
+                    const subcategoryElement = document.createElement('div');
+                    subcategoryElement.classList.add('subcategory-item');
+                    subcategoryElement.innerHTML = `
+                        <h3>${subcategory['小分类']}</h3>
+                        <button onclick="goToQuestionsPage('${subcategory['小分类']}', 'words')">查看单词翻译题目</button>
+                        <button onclick="goToQuestionsPage('${subcategory['小分类']}', 'phrases')">查看短语翻译题目</button>
+                    `;
+                    subcategoryList.appendChild(subcategoryElement);
+                });
+            }
+        })
+        .catch(error => console.error('Error loading subcategories:', error));
+}
+
+// Navigate to the questions page based on type
+function goToQuestionsPage(subcategory, type) {
+    if (type === 'words') {
+        window.location.href = `questions_words.html?subcategory=${encodeURIComponent(subcategory)}`;
+    } else if (type === 'phrases') {
+        window.location.href = `questions_phrases.html?subcategory=${encodeURIComponent(subcategory)}`;
     }
+}
+
 
     // Load questions from JSON file
     function loadQuestions() {
