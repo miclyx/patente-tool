@@ -1,24 +1,24 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Italian Driving License Subcategories</title>
+    <title>意大利驾照子类别</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>Choose a Subcategory</h1>
+    <h1>选择一个子类别</h1>
     <div id="subcategory-list">
         <!-- Subcategories will be loaded here dynamically -->
     </div>
-    <button onclick="goBack()">Back</button>
+    <button onclick="goBack()">返回</button>
 
     <script>
         // Get category index from URL parameters
         const urlParams = new URLSearchParams(window.location.search);
         const categoryIndex = urlParams.get('category');
 
-        // Define subcategories for each main category
+        // Define subcategories for each main category (Italian)
         const subcategories = [
             [
                 "Carreggiata a doppio senso di circolazione",
