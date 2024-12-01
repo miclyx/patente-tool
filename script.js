@@ -117,13 +117,13 @@
 
         // Replace phrases with hoverable translations
         phrasesTranslation.forEach(phrase => {
-            const regex = new RegExp(`\b${phrase['原文']}\b`, 'g');
+            const regex = new RegExp(`\b${phrase['原文']}\\b`, 'g');
             updatedText = updatedText.replace(regex, `<span class="translatable" onmouseover="showTooltip(event, '${phrase['翻译']}')" onmouseout="hideTooltip()">${phrase['原文']}</span>`);
         });
 
         // Replace words with hoverable translations
         wordsTranslation.forEach(word => {
-            const regex = new RegExp(`\b${word['原文']}\b`, 'g');
+            const regex = new RegExp(`\b${word['原文']}\\b`, 'g');
             updatedText = updatedText.replace(regex, `<span class="translatable" onmouseover="showTooltip(event, '${word['翻译']}')" onmouseout="hideTooltip()">${word['原文']}</span>`);
         });
 
