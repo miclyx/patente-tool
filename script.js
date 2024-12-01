@@ -1,69 +1,27 @@
-    let wordsTranslation = {};
-    let phrasesTranslation = {};
+    let wordsTranslation = [];
+    let phrasesTranslation = [];
 
     // Load translations from JSON files
     function loadTranslations() {
         fetch('translated_words.json')
             .then(response => response.json())
             .then(data => {
-                wordsTranslation = data;
+                wordsTranslation = Array.isArray(data) ? data : [];
             })
-            .catch(error => console.error('Error loading words translation:', error));
+            .catch(error => {
+                console.error('Error loading words translation:', error);
+                wordsTranslation = [];
+            });
 
         fetch('translated_phrases.json')
             .then(response => response.json())
             .then(data => {
-                phrasesTranslation = data;
+                phrasesTranslation = Array.isArray(data) ? data : [];
             })
-            .catch(error => console.error('Error loading phrases translation:', error));
-    }
-
-    // Load categories from JSON file
-    function loadCategories() {
-        fetch('categories.json')
-            .then(response => response.json())
-            .then(data => {
-                const categoryList = document.getElementById('category-list');
-                if (categoryList) {
-                    // Use a Set to store unique categories
-                    const uniqueCategories = new Set();
-                    data.forEach((category) => {
-                        uniqueCategories.add(category['大分类']);
-                    });
-                    
-                    // Display unique categories
-                    Array.from(uniqueCategories).forEach((category, index) => {
-                        const categoryElement = document.createElement('div');
-                        categoryElement.classList.add('category-item');
-                        categoryElement.innerHTML = `<a href="category.html?category=${encodeURIComponent(category)}">${category}</a>`;
-                        categoryList.appendChild(categoryElement);
-                    });
-                }
-            })
-            .catch(error => console.error('Error loading categories:', error));
-    }
-
-    // Load subcategories from JSON file
-    function loadSubcategories() {
-        const urlParams = new URLSearchParams(window.location.search);
-        const category = urlParams.get('category');
-
-        fetch('categories.json')
-            .then(response => response.json())
-            .then(data => {
-                const subcategoryList = document.getElementById('subcategory-list');
-                if (subcategoryList && category !== null) {
-                    // Filter subcategories by selected category
-                    const filteredSubcategories = data.filter(item => item['大分类'] === category);
-                    filteredSubcategories.forEach((subcategory, index) => {
-                        const subcategoryElement = document.createElement('div');
-                        subcategoryElement.classList.add('subcategory-item');
-                        subcategoryElement.innerHTML = `<a href="questions.html?subcategory=${encodeURIComponent(subcategory['小分类'])}">${subcategory['小分类']}</a>`;
-                        subcategoryList.appendChild(subcategoryElement);
-                    });
-                }
-            })
-            .catch(error => console.error('Error loading subcategories:', error));
+            .catch(error => {
+                console.error('Error loading phrases translation:', error);
+                phrasesTranslation = [];
+            });
     }
 
     // Load questions from JSON file
@@ -115,13 +73,13 @@
 
         // Replace phrases with clickable translations
         phrasesTranslation.forEach(phrase => {
-            const regex = new RegExp(`\b${phrase['短语']}\b`, 'g');
+            const regex = new RegExp(`\\b${phrase['短语']}\\b`, 'g');
             updatedText = updatedText.replace(regex, `<span class="translatable" onclick="showTranslation('${phrase['短语']}', '${phrase['翻译']}')">${phrase['短语']}</span>`);
         });
 
         // Replace words with clickable translations
         wordsTranslation.forEach(word => {
-            const regex = new RegExp(`\b${word['单词']}\b`, 'g');
+            const regex = new RegExp(`\\b${word['单词']}\\b`, 'g');
             updatedText = updatedText.replace(regex, `<span class="translatable" onclick="showTranslation('${word['单词']}', '${word['翻译']}')">${word['单词']}</span>`);
         });
 
