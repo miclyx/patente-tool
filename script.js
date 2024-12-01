@@ -1,4 +1,3 @@
-<script>
     let wordsTranslation = [];  // 全局变量存储单词翻译
 
     // Load translations from JSON file when the page loads
