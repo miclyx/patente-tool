@@ -170,4 +170,4 @@
             loadQuestions();
         }
     };
-</script>
+
