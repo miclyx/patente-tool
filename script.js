@@ -1,4 +1,21 @@
-    let wordsTranslation = [];  // 全局变量存储单词翻译
+// Import the Firebase modules that you need
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.x/firebase-app.js";
+import { getFirestore, collection, getDocs, setDoc, doc } from "https://www.gstatic.com/firebasejs/9.x/firebase-firestore.js";
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+  apiKey: "AIzaSyD9cXHckt2el_OjWU5M-0gQldh-M8i4vN0",
+  authDomain: "patente-tool.firebaseapp.com",
+  projectId: "patente-tool",
+  storageBucket: "patente-tool.firebasestorage.app",
+  messagingSenderId: "89703343553",
+  appId: "1:89703343553:web:057d28c9a57c5241befb40",
+  measurementId: "G-5W1CR9K8ZZ"
+};
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+let wordsTranslation = [];  // 全局变量存储单词翻译
 
     // Load translations from JSON file when the page loads
     function loadTranslations() {
@@ -19,22 +36,60 @@ function isQuestionMarked(questionText) {
 
 // 切换标记状态
 function toggleMarkQuestion(questionText, button) {
-    let markedQuestions = JSON.parse(localStorage.getItem('markedQuestions')) || [];
-    
-    if (markedQuestions.includes(questionText)) {
-        // 如果已标记，则取消标记
-        markedQuestions = markedQuestions.filter(q => q !== questionText);
-        button.innerText = '标记';
-        button.classList.remove('marked');
-    } else {
-        // 如果未标记，则进行标记
-        markedQuestions.push(questionText);
-        button.innerText = '取消标记';
-        button.classList.add('marked');
-    }
+    const userId = "demoUser";  // 在真实项目中，您需要为每个用户设置唯一的 ID
+    let markedQuestionsRef = db.collection("users").doc(userId);
 
-    // 保存更新到 localStorage
-    localStorage.setItem('markedQuestions', JSON.stringify(markedQuestions));
+    markedQuestionsRef.get().then((doc) => {
+        let markedQuestions = doc.exists ? doc.data().markedQuestions : [];
+        
+        if (markedQuestions.includes(questionText)) {
+            // 如果已标记，则取消标记
+            markedQuestions = markedQuestions.filter(q => q !== questionText);
+            button.innerText = '标记';
+            button.classList.remove('marked');
+        } else {
+            // 如果未标记，则进行标记
+            markedQuestions.push(questionText);
+            button.innerText = '取消标记';
+            button.classList.add('marked');
+        }
+
+        // 保存更新到 Firestore
+        markedQuestionsRef.set({ markedQuestions });
+    }).catch((error) => {
+        console.error("Error updating document: ", error);
+    });
+}
+
+function loadMarkedQuestions() {
+    const userId = "demoUser";  // 在真实项目中，您需要为每个用户设置唯一的 ID
+    let markedQuestionsRef = db.collection("users").doc(userId);
+
+    markedQuestionsRef.get().then((doc) => {
+        if (doc.exists) {
+            const markedQuestions = doc.data().markedQuestions;
+
+            // 处理标记状态
+            const questionsList = document.getElementById('questions-list');
+            if (questionsList) {
+                const questionItems = questionsList.querySelectorAll('.question-item');
+                questionItems.forEach((item) => {
+                    const questionText = item.querySelector('p').innerText;
+                    const markButton = item.querySelector('.mark-button');
+
+                    if (markedQuestions.includes(questionText)) {
+                        markButton.classList.add('marked');
+                        markButton.innerText = '取消标记';
+                    } else {
+                        markButton.classList.remove('marked');
+                        markButton.innerText = '标记';
+                    }
+                });
+            }
+        }
+    }).catch((error) => {
+        console.error("Error getting document: ", error);
+    });
 }
 
 
@@ -232,5 +287,8 @@ function loadQuestions() {
             loadSubcategories();
         } else if (document.getElementById('questions-list')) {
             loadQuestions();
+            loadMarkedQuestions();  // 加载标记状态
         }
     };
+
+
