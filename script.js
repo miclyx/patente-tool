@@ -116,21 +116,44 @@ function loadQuestions() {
                 filteredQuestions.forEach(question => {
                     const questionElement = document.createElement('div');
                     questionElement.classList.add('question-item');
+
                     // 检查是否已经标记
-                    if (isQuestionMarked(question['题目'])) {
+                    const isMarked = isQuestionMarked(question['题目']);
+                    if (isMarked) {
                         questionElement.classList.add('marked');
                     }
 
-                    questionElement.innerHTML = addWordTranslationToText(`
-                        <p>${question['题目']}</p>
-                        <button onclick="toggleAnswer(this)">显示答案</button>
-                        <div class="answer" style="display: none;">${question['答案']}</div>
-                        <button onclick="toggleMarkQuestion('${question['题目']}', this)">标记</button>
-                    `);
-                    // 如果已标记，更新按钮的文本为 "取消标记"
-                    if (isQuestionMarked(question['题目'])) {
-                        questionElement.querySelector('button[onclick^="toggleMarkQuestion"]').innerText = '取消标记';
-                    }
+                    // 创建题目内容
+                    const questionTextElement = document.createElement('p');
+                    questionTextElement.innerHTML = addWordTranslationToText(question['题目']);
+
+                    // 创建显示答案按钮
+                    const answerButton = document.createElement('button');
+                    answerButton.innerText = '显示答案';
+                    answerButton.onclick = function() {
+                        toggleAnswer(answerButton);
+                    };
+
+                    // 创建答案内容元素
+                    const answerDiv = document.createElement('div');
+                    answerDiv.classList.add('answer');
+                    answerDiv.style.display = 'none';
+                    answerDiv.innerText = question['答案'];
+
+                    // 创建标记按钮（使用复选框或者图标）
+                    const markButton = document.createElement('button');
+                    markButton.classList.add('mark-button');
+                    markButton.innerText = isMarked ? '取消标记' : '标记';
+                    markButton.onclick = function() {
+                        toggleMarkQuestion(question['题目'], markButton);
+                    };
+
+                    // 将所有元素添加到问题项中
+                    questionElement.appendChild(questionTextElement);
+                    questionElement.appendChild(answerButton);
+                    questionElement.appendChild(answerDiv);
+                    questionElement.appendChild(markButton);
+
                     questionsList.appendChild(questionElement);
                 });
             }
