@@ -1,22 +1,4 @@
 
-
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
-const firebaseConfig = {
-  apiKey: "AIzaSyD9cXHckt2el_OjWU5M-0gQldh-M8i4vN0",
-  authDomain: "patente-tool.firebaseapp.com",
-  projectId: "patente-tool",
-  storageBucket: "patente-tool.firebasestorage.app",
-  messagingSenderId: "89703343553",
-  appId: "1:89703343553:web:057d28c9a57c5241befb40",
-  measurementId: "G-5W1CR9K8ZZ"
-};
-
-// 初始化 Firebase
-firebase.initializeApp(firebaseConfig);
-
-// 初始化 Firestore
-const db = firebase.firestore();
-
 let wordsTranslation = [];  // 全局变量存储单词翻译
 
     // Load translations from JSON file when the page loads
