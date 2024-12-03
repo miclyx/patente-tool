@@ -10,9 +10,12 @@ const firebaseConfig = {
   appId: "1:89703343553:web:057d28c9a57c5241befb40",
   measurementId: "G-5W1CR9K8ZZ"
 };
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+
+// 初始化 Firebase
+firebase.initializeApp(firebaseConfig);
+
+// 初始化 Firestore
+const db = firebase.firestore();
 
 let wordsTranslation = [];  // 全局变量存储单词翻译
 
