@@ -23,7 +23,7 @@
                     data.forEach((category) => {
                         uniqueCategories.add(category['大分类']);
                     });
-                    
+
                     // Display unique categories
                     Array.from(uniqueCategories).forEach((category, index) => {
                         const categoryElement = document.createElement('div');
@@ -127,7 +127,7 @@
         tooltip.className = 'tooltip';
         tooltip.innerText = translation;
         document.body.appendChild(tooltip);
-        
+
         const xOffset = 15;
         const yOffset = 15;
         tooltip.style.left = event.pageX + xOffset + 'px';
