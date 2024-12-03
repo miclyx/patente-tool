@@ -11,6 +11,33 @@
             .catch(error => console.error('Error loading translations:', error));
     }
 
+// 检查题目是否已被标记
+function isQuestionMarked(questionText) {
+    const markedQuestions = JSON.parse(localStorage.getItem('markedQuestions')) || [];
+    return markedQuestions.includes(questionText);
+}
+
+// 切换标记状态
+function toggleMarkQuestion(questionText, button) {
+    let markedQuestions = JSON.parse(localStorage.getItem('markedQuestions')) || [];
+    
+    if (markedQuestions.includes(questionText)) {
+        // 如果已标记，则取消标记
+        markedQuestions = markedQuestions.filter(q => q !== questionText);
+        button.innerText = '标记';
+        button.parentElement.classList.remove('marked');
+    } else {
+        // 如果未标记，则进行标记
+        markedQuestions.push(questionText);
+        button.innerText = '取消标记';
+        button.parentElement.classList.add('marked');
+    }
+
+    // 保存更新到 localStorage
+    localStorage.setItem('markedQuestions', JSON.stringify(markedQuestions));
+}
+
+
     // Load categories from JSON file
     function loadCategories() {
         fetch('categories.json')
@@ -60,46 +87,56 @@
     }
 
     // Load questions from JSON file
-    function loadQuestions() {
-        const urlParams = new URLSearchParams(window.location.search);
-        const subcategory = urlParams.get('subcategory');
+function loadQuestions() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const subcategory = urlParams.get('subcategory');
 
-        fetch('categories.json')
-            .then(response => response.json())
-            .then(data => {
-                // Load the related image based on the selected subcategory
-                const subcategoryData = data.find(item => item['小分类'] === subcategory);
-                if (subcategoryData && subcategoryData['图片'] !== '无图片') {
-                    const imageContainer = document.getElementById('image-container');
-                    const imgElement = document.createElement('img');
-                    imgElement.src = `images/${subcategoryData['图片']}`;
-                    imgElement.alt = subcategory;
-                    imageContainer.appendChild(imgElement);
-                }
-            })
-            .catch(error => console.error('Error loading categories for image:', error));
+    fetch('categories.json')
+        .then(response => response.json())
+        .then(data => {
+            // Load the related image based on the selected subcategory
+            const subcategoryData = data.find(item => item['小分类'] === subcategory);
+            if (subcategoryData && subcategoryData['图片'] !== '无图片') {
+                const imageContainer = document.getElementById('image-container');
+                const imgElement = document.createElement('img');
+                imgElement.src = `images/${subcategoryData['图片']}`;
+                imgElement.alt = subcategory;
+                imageContainer.appendChild(imgElement);
+            }
+        })
+        .catch(error => console.error('Error loading categories for image:', error));
 
-        fetch('questions.json')
-            .then(response => response.json())
-            .then(data => {
-                const questionsList = document.getElementById('questions-list');
-                if (questionsList) {
-                    // Filter questions based on selected subcategory
-                    const filteredQuestions = data.filter(question => question['类别'] === subcategory);
-                    filteredQuestions.forEach(question => {
-                        const questionElement = document.createElement('div');
-                        questionElement.classList.add('question-item');
-                        questionElement.innerHTML = addWordTranslationToText(`
-                            <p>${question['题目']}</p>
-                            <button onclick="toggleAnswer(this)">显示答案</button>
-                            <div class="answer" style="display: none;">${question['答案']}</div>
-                        `);
-                        questionsList.appendChild(questionElement);
-                    });
-                }
-            })
-            .catch(error => console.error('Error loading questions:', error));
-    }
+    fetch('questions.json')
+        .then(response => response.json())
+        .then(data => {
+            const questionsList = document.getElementById('questions-list');
+            if (questionsList) {
+                // Filter questions based on selected subcategory
+                const filteredQuestions = data.filter(question => question['类别'] === subcategory);
+                filteredQuestions.forEach(question => {
+                    const questionElement = document.createElement('div');
+                    questionElement.classList.add('question-item');
+                    // 检查是否已经标记
+                    if (isQuestionMarked(question['题目'])) {
+                        questionElement.classList.add('marked');
+                    }
+
+                    questionElement.innerHTML = addWordTranslationToText(`
+                        <p>${question['题目']}</p>
+                        <button onclick="toggleAnswer(this)">显示答案</button>
+                        <div class="answer" style="display: none;">${question['答案']}</div>
+                        <button onclick="toggleMarkQuestion('${question['题目']}', this)">标记</button>
+                    `);
+                    // 如果已标记，更新按钮的文本为 "取消标记"
+                    if (isQuestionMarked(question['题目'])) {
+                        questionElement.querySelector('button[onclick^="toggleMarkQuestion"]').innerText = '取消标记';
+                    }
+                    questionsList.appendChild(questionElement);
+                });
+            }
+        })
+        .catch(error => console.error('Error loading questions:', error));
+}
 
     // Add word translation to text with hover effect
     function addWordTranslationToText(text) {
