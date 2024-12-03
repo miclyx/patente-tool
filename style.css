@@ -47,3 +47,8 @@ button:hover {
     transform: scale(1.03);  /* 鼠标悬停时轻微放大 */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);  /* 鼠标悬停时增加阴影效果 */
 }
+.marked {
+    background-color: #f0e68c; /* 浅黄色背景用于标记的题目 */
+    border: 1px solid #d4af37; /* 增加边框以突出标记 */
+}
+
