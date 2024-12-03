@@ -1,6 +1,8 @@
-// Import the Firebase modules that you need
-import { initializeApp } from "https://www.gstatic.com/firebasejs/9.x/firebase-app.js";
-import { getFirestore, collection, getDocs, setDoc, doc } from "https://www.gstatic.com/firebasejs/9.x/firebase-firestore.js";
+<!-- Firebase App (核心 Firebase SDK) -->
+<script src="https://www.gstatic.com/firebasejs/9.x.x/firebase-app.js"></script>
+<!-- Firebase Firestore -->
+<script src="https://www.gstatic.com/firebasejs/9.x.x/firebase-firestore.js"></script>
+
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
   apiKey: "AIzaSyD9cXHckt2el_OjWU5M-0gQldh-M8i4vN0",
