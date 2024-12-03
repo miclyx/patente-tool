@@ -48,7 +48,7 @@ button:hover {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);  /* 鼠标悬停时增加阴影效果 */
 }
 .mark-button {
-    background-color: #ffcc00;
+    background-color: #ffcc00; /* 默认按钮背景色 */
     color: black;
     border: none;
     cursor: pointer;
@@ -56,7 +56,11 @@ button:hover {
     margin-left: 10px;
 }
 
+.mark-button.marked {
+    background-color: #ffaa00; /* 标记后的按钮颜色 */
+}
+
 .mark-button:hover {
-    background-color: #ffaa00;
+    background-color: #ffaa00; /* 悬停时按钮颜色 */
 }
 
