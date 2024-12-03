@@ -11,6 +11,32 @@ function loadPhrasesTranslations() {
         .catch(error => console.error('Error loading phrase translations:', error));
 }
 
+// 检查题目是否已被标记
+function isQuestionMarked(questionText) {
+    const markedQuestions = JSON.parse(localStorage.getItem('markedQuestions')) || [];
+    return markedQuestions.includes(questionText);
+}
+
+// 切换标记状态
+function toggleMarkQuestion(questionText, button) {
+    let markedQuestions = JSON.parse(localStorage.getItem('markedQuestions')) || [];
+    
+    if (markedQuestions.includes(questionText)) {
+        // 如果已标记，则取消标记
+        markedQuestions = markedQuestions.filter(q => q !== questionText);
+        button.innerText = '标记';
+        button.classList.remove('marked');
+    } else {
+        // 如果未标记，则进行标记
+        markedQuestions.push(questionText);
+        button.innerText = '取消标记';
+        button.classList.add('marked');
+    }
+
+    // 保存更新到 localStorage
+    localStorage.setItem('markedQuestions', JSON.stringify(markedQuestions));
+}
+
 // Load questions from JSON file with phrase translation
 function loadQuestionsWithPhrases() {
     const urlParams = new URLSearchParams(window.location.search);
@@ -41,10 +67,20 @@ function loadQuestionsWithPhrases() {
                 filteredQuestions.forEach(question => {
                     const questionElement = document.createElement('div');
                     questionElement.classList.add('question-item');
+
+                    // 检查是否已经标记
+                    let markButtonText = '标记';
+                    let markedClass = '';
+                    if (isQuestionMarked(question['题目'])) {
+                        markButtonText = '取消标记';
+                        markedClass = 'marked';
+                    }
+
                     questionElement.innerHTML = addPhraseTranslationToText(`
                         <p>${question['题目']}</p>
                         <button onclick="toggleAnswer(this)">显示答案</button>
                         <div class="answer" style="display: none;">${question['答案']}</div>
+                        <button onclick="toggleMarkQuestion('${question['题目']}', this)" class="${markedClass}">${markButtonText}</button>
                     `);
                     questionsList.appendChild(questionElement);
                 });
