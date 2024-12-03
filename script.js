@@ -61,45 +61,50 @@
 
     // Load questions from JSON file
     function loadQuestions() {
-        const urlParams = new URLSearchParams(window.location.search);
-        const subcategory = urlParams.get('subcategory');
+    const urlParams = new URLSearchParams(window.location.search);
+    const subcategory = urlParams.get('subcategory');
 
-        fetch('categories.json')
-            .then(response => response.json())
-            .then(data => {
-                // Load the related image based on the selected subcategory
-                const subcategoryData = data.find(item => item['小分类'] === subcategory);
-                if (subcategoryData && subcategoryData['图片'] !== '无图片') {
-                    const imageContainer = document.getElementById('image-container');
-                    const imgElement = document.createElement('img');
-                    imgElement.src = `images/${subcategoryData['图片']}`;
-                    imgElement.alt = subcategory;
-                    imageContainer.appendChild(imgElement);
-                }
-            })
-            .catch(error => console.error('Error loading categories for image:', error));
+    fetch('categories.json')
+        .then(response => response.json())
+        .then(data => {
+            // Load the related image based on the selected subcategory
+            const subcategoryData = data.find(item => item['小分类'] === subcategory);
+            if (subcategoryData && subcategoryData['图片'] !== '无图片') {
+                const imageContainer = document.getElementById('image-container');
+                const imgElement = document.createElement('img');
+                imgElement.src = `images/${subcategoryData['图片']}`;
+                imgElement.alt = subcategory;
+                imageContainer.appendChild(imgElement);
+            }
+        })
+        .catch(error => console.error('Error loading categories for image:', error));
 
-        fetch('questions.json')
-            .then(response => response.json())
-            .then(data => {
-                const questionsList = document.getElementById('questions-list');
-                if (questionsList) {
-                    // Filter questions based on selected subcategory
-                    const filteredQuestions = data.filter(question => question['类别'] === subcategory);
-                    filteredQuestions.forEach(question => {
-                        const questionElement = document.createElement('div');
-                        questionElement.classList.add('question-item');
-                        questionElement.innerHTML = addWordTranslationToText(`
-                            <p>${question['题目']}</p>
-                            <button onclick="toggleAnswer(this)">显示答案</button>
-                            <div class="answer" style="display: none;">${question['答案']}</div>
-                        `);
-                        questionsList.appendChild(questionElement);
-                    });
-                }
-            })
-            .catch(error => console.error('Error loading questions:', error));
-    }
+    fetch('questions.json')
+        .then(response => response.json())
+        .then(data => {
+            const questionsList = document.getElementById('questions-list');
+            if (questionsList) {
+                // Filter questions based on selected subcategory
+                const filteredQuestions = data.filter(question => question['类别'] === subcategory);
+                filteredQuestions.forEach(question => {
+                    const questionElement = document.createElement('div');
+                    questionElement.classList.add('question-item');
+                    questionElement.innerHTML = addWordTranslationToText(`
+                        <p>${question['题目']}</p>
+                        <button onclick="toggleAnswer(this)">显示答案</button>
+                        <div class="answer" style="display: none;">${question['答案']}</div>
+                        <button onclick="toggleMarkQuestion('${question['题目']}', this)">标记</button>
+                    `);
+                    // 检查是否已经标记过
+                    if (isQuestionMarked(question['题目'])) {
+                        questionElement.classList.add('marked');
+                    }
+                    questionsList.appendChild(questionElement);
+                });
+            }
+        })
+        .catch(error => console.error('Error loading questions:', error));
+}
 
     // Add word translation to text with hover effect
     function addWordTranslationToText(text) {
