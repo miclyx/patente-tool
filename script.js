@@ -1,3 +1,5 @@
+// 使用 Supabase 实现跨设备保存标记状态
+// Supabase URL 和 Key 在 HTML 中已经配置，确保只加载一次 Supabase 客户端
 
 let wordsTranslation = [];  // 全局变量存储单词翻译
 let markedQuestions = [];  // 全局变量存储标记的题目
@@ -15,6 +17,10 @@ function loadTranslations() {
 
 // 加载标记的题目
 async function loadMarkedQuestionsFromDatabase() {
+    if (!window.supabase) {
+        console.error('Supabase client not initialized');
+        return;
+    }
     const { data, error } = await supabase
         .from('marked_questions')
         .select('question_text');
@@ -34,6 +40,10 @@ function isQuestionMarked(questionText) {
 
 // 切换标记状态
 async function toggleMarkQuestion(questionText, button) {
+    if (!window.supabase) {
+        console.error('Supabase client not initialized');
+        return;
+    }
     const isMarked = isQuestionMarked(questionText);
 
     if (isMarked) {
@@ -128,6 +138,7 @@ async function loadQuestions() {
         .then(response => response.json())
         .then(data => {
             const questionsList = document.getElementById('questions-list');
+            const imageContainer = document.getElementById('image-container');
             if (questionsList) {
                 questionsList.innerHTML = '';
                 // 筛选问题
@@ -156,6 +167,16 @@ async function loadQuestions() {
                     questionElement.appendChild(markButton);
                     questionsList.appendChild(questionElement);
                 });
+
+                // 加载图片
+                const subcategoryData = data.find(item => item['小分类'] === subcategory);
+                if (subcategoryData && subcategoryData['图片'] && subcategoryData['图片'] !== '无图片') {
+                    imageContainer.innerHTML = '';
+                    const imgElement = document.createElement('img');
+                    imgElement.src = `images/${subcategoryData['图片']}`;
+                    imgElement.alt = subcategory;
+                    imageContainer.appendChild(imgElement);
+                }
             }
         })
         .catch(error => console.error('Error loading questions:', error));
