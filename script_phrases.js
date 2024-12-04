@@ -105,9 +105,6 @@ async function loadQuestionsWithPhrases() {
                 imageContainer.innerHTML = '<p>图片加载失败，请检查路径或文件是否存在。</p>';
             };
             imageContainer.appendChild(imgElement);
-        } else {
-            console.log('No valid image found for subcategory:', subcategory);
-            imageContainer.innerHTML = '<p>未找到对应的图片。</p>';
         }
 
         const questionsResponse = await fetch('questions.json');
@@ -220,6 +217,11 @@ function switchToWordTranslation() {
         window.location.href = `questions.html?subcategory=${encodeURIComponent(subcategory)}`;
     }
 }
+
+    // Go back to the previous page
+    function goBack() {
+        window.history.back();
+    }
 
 // 在页面加载时调用相应函数
 window.onload = async function() {
