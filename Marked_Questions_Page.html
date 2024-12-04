@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>标记的题目</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+    <script>
+        // Supabase 客户端初始化
+        const supabaseUrl = "YOUR_SUPABASE_URL";
+        const supabaseKey = "YOUR_SUPABASE_ANON_KEY";
+        const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+        let markedQuestions = [];  // 全局变量存储标记的题目
+
+        // 加载标记的题目
+        async function loadMarkedQuestionsFromDatabase() {
+            const { data, error } = await supabase
+                .from('marked_questions')
+                .select('question_text');
+
+            if (error) {
+                console.error('Error loading marked questions:', error);
+                return;
+            }
+
+            markedQuestions = data.map(item => item.question_text);
+            displayMarkedQuestions();
+        }
+
+        // 显示标记的题目
+        function displayMarkedQuestions() {
+            const markedQuestionsList = document.getElementById('marked-questions-list');
+            markedQuestionsList.innerHTML = '';
+
+            if (markedQuestions.length === 0) {
+                markedQuestionsList.innerHTML = '<p>没有标记的题目。</p>';
+                return;
+            }
+
+            markedQuestions.forEach(questionText => {
+                const questionElement = document.createElement('div');
+                questionElement.classList.add('marked-question-item');
+                questionElement.innerText = questionText;
+                markedQuestionsList.appendChild(questionElement);
+            });
+        }
+
+        // 页面加载时调用加载标记题目的函数
+        window.onload = async function() {
+            await loadMarkedQuestionsFromDatabase();
+        };
+    </script>
+</head>
+<body>
+    <header>
+        <h1>标记的题目</h1>
+        <button onclick="window.history.back()">返回</button>
+    </header>
+    <main>
+        <div id="marked-questions-list" class="marked-questions-list"></div>
+    </main>
+</body>
+</html>
