@@ -5,12 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>标记的题目</title>
     <link rel="stylesheet" href="styles.css">
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+        <!-- 初始化 Supabase 客户端 -->
     <script>
-        // Supabase 客户端初始化
-        const supabaseUrl = "YOUR_SUPABASE_URL";
-        const supabaseKey = "YOUR_SUPABASE_ANON_KEY";
-        const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+        const supabaseUrl = 'https://ghjtiktynoidljnthqjc.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdoanRpa3R5bm9pZGxqbnRocWpjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzMyNzY4MjgsImV4cCI6MjA0ODg1MjgyOH0.pff0q4Zz7HxE1MvlXOblZRpV-javKLJdexVyl_wc0IE';
+        window.supabase = supabase.createClient(supabaseUrl, supabaseKey);
+    </script>
         let markedQuestions = [];  // 全局变量存储标记的题目
 
         // 加载标记的题目
