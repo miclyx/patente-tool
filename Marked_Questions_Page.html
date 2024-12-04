@@ -20,7 +20,7 @@
         async function loadMarkedQuestionsFromDatabase() {
             const { data, error } = await supabase
                 .from('marked_questions')
-                .select('question_text, answer_text');
+                .select('question_text');
 
             if (error) {
                 console.error('Error loading marked questions:', error);
@@ -50,34 +50,8 @@
                 questionTextElement.innerText = question.question_text;
                 questionElement.appendChild(questionTextElement);
 
-                // 创建显示答案按钮
-                const answerButton = document.createElement('button');
-                answerButton.innerText = '显示答案';
-                answerButton.onclick = function() {
-                    toggleAnswer(answerButton, answerDiv);
-                };
-                questionElement.appendChild(answerButton);
-
-                // 创建答案内容元素
-                const answerDiv = document.createElement('div');
-                answerDiv.classList.add('answer');
-                answerDiv.style.display = 'none';
-                answerDiv.innerText = question.answer_text;
-                questionElement.appendChild(answerDiv);
-
                 markedQuestionsList.appendChild(questionElement);
             });
-        }
-
-        // 切换答案的显示状态
-        function toggleAnswer(button, answerDiv) {
-            if (answerDiv.style.display === 'none') {
-                answerDiv.style.display = 'block';
-                button.innerText = '隐藏答案';
-            } else {
-                answerDiv.style.display = 'none';
-                button.innerText = '显示答案';
-            }
         }
 
         // 页面加载时调用加载标记题目的函数
