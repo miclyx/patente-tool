@@ -18,62 +18,48 @@ function isQuestionMarked(questionText) {
     return markedQuestions.includes(questionText);
 }
 
-// 切换标记状态
-function toggleMarkQuestion(questionText, button) {
-    const userId = "demoUser";  // 在真实项目中，您需要为每个用户设置唯一的 ID
-    let markedQuestionsRef = db.collection("users").doc(userId);
+async function loadMarkedQuestions() {
+  const userId = "demoUser"; // 这里需要每个用户的唯一 ID
+  const markedQuestionsRef = doc(db, "users", userId);
 
-    markedQuestionsRef.get().then((doc) => {
-        let markedQuestions = doc.exists ? doc.data().markedQuestions : [];
-        
-        if (markedQuestions.includes(questionText)) {
-            // 如果已标记，则取消标记
-            markedQuestions = markedQuestions.filter(q => q !== questionText);
-            button.innerText = '标记';
-            button.classList.remove('marked');
-        } else {
-            // 如果未标记，则进行标记
-            markedQuestions.push(questionText);
-            button.innerText = '取消标记';
-            button.classList.add('marked');
-        }
-
-        // 保存更新到 Firestore
-        markedQuestionsRef.set({ markedQuestions });
-    }).catch((error) => {
-        console.error("Error updating document: ", error);
-    });
+  try {
+    const docSnap = await getDoc(markedQuestionsRef);
+    if (docSnap.exists()) {
+      const markedQuestions = docSnap.data().markedQuestions || [];
+      // 处理标记状态...
+    } else {
+      console.log("No such document!");
+    }
+  } catch (error) {
+    console.error("Error loading document: ", error);
+  }
 }
 
-function loadMarkedQuestions() {
-    const userId = "demoUser";  // 在真实项目中，您需要为每个用户设置唯一的 ID
-    let markedQuestionsRef = db.collection("users").doc(userId);
+async function toggleMarkQuestion(questionText, button) {
+  const userId = "demoUser";
+  const markedQuestionsRef = doc(db, "users", userId);
 
-    markedQuestionsRef.get().then((doc) => {
-        if (doc.exists) {
-            const markedQuestions = doc.data().markedQuestions;
+  try {
+    const docSnap = await getDoc(markedQuestionsRef);
+    let markedQuestions = docSnap.exists() ? docSnap.data().markedQuestions : [];
 
-            // 处理标记状态
-            const questionsList = document.getElementById('questions-list');
-            if (questionsList) {
-                const questionItems = questionsList.querySelectorAll('.question-item');
-                questionItems.forEach((item) => {
-                    const questionText = item.querySelector('p').innerText;
-                    const markButton = item.querySelector('.mark-button');
+    if (markedQuestions.includes(questionText)) {
+      // 如果已标记，则取消标记
+      markedQuestions = markedQuestions.filter(q => q !== questionText);
+      button.innerText = '标记';
+      button.classList.remove('marked');
+    } else {
+      // 如果未标记，则进行标记
+      markedQuestions.push(questionText);
+      button.innerText = '取消标记';
+      button.classList.add('marked');
+    }
 
-                    if (markedQuestions.includes(questionText)) {
-                        markButton.classList.add('marked');
-                        markButton.innerText = '取消标记';
-                    } else {
-                        markButton.classList.remove('marked');
-                        markButton.innerText = '标记';
-                    }
-                });
-            }
-        }
-    }).catch((error) => {
-        console.error("Error getting document: ", error);
-    });
+    // 保存更新到 Firestore
+    await setDoc(markedQuestionsRef, { markedQuestions });
+  } catch (error) {
+    console.error("Error updating document: ", error);
+  }
 }
 
 
