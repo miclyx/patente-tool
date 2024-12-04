@@ -1,9 +1,3 @@
-// 使用 Supabase 实现跨设备保存标记状态
-import { createClient } from '@supabase/supabase-js';
-
-const supabaseUrl = 'https://your-supabase-url.supabase.co';
-const supabaseKey = 'your-supabase-anon-key';
-const supabase = createClient(supabaseUrl, supabaseKey);
 
 let wordsTranslation = [];  // 全局变量存储单词翻译
 
