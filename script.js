@@ -22,9 +22,16 @@ function isQuestionMarked(questionText) {
 }
 
 // 切换标记状态
-function toggleMarkQuestion(questionText, button) {
-    let markedQuestions = JSON.parse(localStorage.getItem('markedQuestions')) || [];
-    
+async function toggleMarkQuestion(questionText, button) {
+    const userId = "demoUser";  // 这里需要每个用户的唯一 ID
+    let { data, error } = await supabase
+        .from('marked_questions')
+        .select('questions')
+        .eq('user_id', userId)
+        .single();
+
+    let markedQuestions = data ? data.questions : [];
+
     if (markedQuestions.includes(questionText)) {
         // 如果已标记，则取消标记
         markedQuestions = markedQuestions.filter(q => q !== questionText);
@@ -37,10 +44,49 @@ function toggleMarkQuestion(questionText, button) {
         button.classList.add('marked');
     }
 
-    // 保存更新到 localStorage
-    localStorage.setItem('markedQuestions', JSON.stringify(markedQuestions));
+    // 保存更新到 Supabase
+    const { error: updateError } = await supabase
+        .from('marked_questions')
+        .upsert({ user_id: userId, questions: markedQuestions });
+
+    if (updateError) {
+        console.error('更新标记问题时出错：', updateError);
+    }
 }
 
+async function loadMarkedQuestions() {
+    const userId = "demoUser"; // 这里需要每个用户的唯一 ID
+    let { data, error } = await supabase
+        .from('marked_questions')
+        .select('questions')
+        .eq('user_id', userId)
+        .single();
+
+    if (error) {
+        console.error('加载标记问题时出错：', error);
+        return;
+    }
+
+    const markedQuestions = data ? data.questions : [];
+
+    // 更新页面中标记的状态
+    const questionsList = document.getElementById('questions-list');
+    if (questionsList) {
+        const questionItems = questionsList.querySelectorAll('.question-item');
+        questionItems.forEach(item => {
+            const questionText = item.querySelector('p').innerText;
+            const markButton = item.querySelector('.mark-button');
+
+            if (markedQuestions.includes(questionText)) {
+                markButton.innerText = '取消标记';
+                markButton.classList.add('marked');
+            } else {
+                markButton.innerText = '标记';
+                markButton.classList.remove('marked');
+            }
+        });
+    }
+}
 
 
     // Load categories from JSON file
@@ -237,6 +283,7 @@ function loadQuestions() {
             loadSubcategories();
         } else if (document.getElementById('questions-list')) {
             loadQuestions();
+            loadMarkedQuestions();  // 加载标记状态
         }
     };
 
