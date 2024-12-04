@@ -8,12 +8,7 @@
     <link rel="stylesheet" href="styles.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
         <!-- 初始化 Supabase 客户端 -->
-    <script>
-        const supabaseUrl = 'https://ghjtiktynoidljnthqjc.supabase.co';
-        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdoanRpa3R5bm9pZGxqbnRocWpjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzMyNzY4MjgsImV4cCI6MjA0ODg1MjgyOH0.pff0q4Zz7HxE1MvlXOblZRpV-javKLJdexVyl_wc0IE';
-        window.supabase = supabase.createClient(supabaseUrl, supabaseKey);
-    <script>
-    <style>
+        <style>
         body {
             font-family: Arial, sans-serif;
             background-color: #f9f9f9;
@@ -93,6 +88,11 @@
             border-radius: 5px;
         }
     </style>
+    <script>
+        const supabaseUrl = 'https://ghjtiktynoidljnthqjc.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdoanRpa3R5bm9pZGxqbnRocWpjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzMyNzY4MjgsImV4cCI6MjA0ODg1MjgyOH0.pff0q4Zz7HxE1MvlXOblZRpV-javKLJdexVyl_wc0IE';
+        window.supabase = supabase.createClient(supabaseUrl, supabaseKey);
+
         let markedQuestions = [];  // 全局变量存储标记的题目
         let questionsData = [];   // 全局变量存储所有问题数据
 
