@@ -176,10 +176,17 @@ async function loadQuestions() {
                 const subcategoryData = data.find(item => item['小分类'] === subcategory);
                 if (subcategoryData && subcategoryData['图片'] && subcategoryData['图片'] !== '无图片') {
                     imageContainer.innerHTML = '';
+                    const imgPath = `images/${subcategoryData['图片']}`;
+                    console.log('Image source:', imgPath);  // 调试信息
                     const imgElement = document.createElement('img');
-                    imgElement.src = `images/${subcategoryData['图片']}`;
+                    imgElement.src = imgPath;
                     imgElement.alt = subcategory;
+                    imgElement.onerror = function() {
+                        console.error('Error loading image:', imgPath);
+                    };
                     imageContainer.appendChild(imgElement);
+                } else {
+                    console.log('No valid image found for subcategory:', subcategory);
                 }
             }
         })
