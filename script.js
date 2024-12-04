@@ -57,7 +57,7 @@ function toggleMarkQuestion(questionText, button) {
                     Array.from(uniqueCategories).forEach((category, index) => {
                         const categoryElement = document.createElement('div');
                         categoryElement.classList.add('category-item');
-                        categoryElement.innerHTML = `<a href="category.html?category=${encodeURIComponent(category)}">${category}</a>`;
+                        categoryElement.innerHTML = <a href="category.html?category=${encodeURIComponent(category)}">${category}</a>;
                         categoryList.appendChild(categoryElement);
                     });
                 }
