@@ -1,5 +1,5 @@
 
-let wordsTranslation = [];  // 全局变量存储单词翻译
+    let wordsTranslation = [];  // 全局变量存储单词翻译
 
     // Load translations from JSON file when the page loads
     function loadTranslations() {
@@ -39,7 +39,6 @@ function toggleMarkQuestion(questionText, button) {
 }
 
 
-
     // Load categories from JSON file
     function loadCategories() {
         fetch('categories.json')
@@ -57,7 +56,7 @@ function toggleMarkQuestion(questionText, button) {
                     Array.from(uniqueCategories).forEach((category, index) => {
                         const categoryElement = document.createElement('div');
                         categoryElement.classList.add('category-item');
-                        categoryElement.innerHTML = <a href="category.html?category=${encodeURIComponent(category)}">${category}</a>;
+                        categoryElement.innerHTML = `<a href="category.html?category=${encodeURIComponent(category)}">${category}</a>`;
                         categoryList.appendChild(categoryElement);
                     });
                 }
@@ -80,7 +79,7 @@ function toggleMarkQuestion(questionText, button) {
                     filteredSubcategories.forEach((subcategory, index) => {
                         const subcategoryElement = document.createElement('div');
                         subcategoryElement.classList.add('subcategory-item');
-                        subcategoryElement.innerHTML = <a href="questions.html?subcategory=${encodeURIComponent(subcategory['小分类'])}">${subcategory['小分类']}</a>;
+                        subcategoryElement.innerHTML = `<a href="questions.html?subcategory=${encodeURIComponent(subcategory['小分类'])}">${subcategory['小分类']}</a>`;
                         subcategoryList.appendChild(subcategoryElement);
                     });
                 }
@@ -101,7 +100,7 @@ function loadQuestions() {
             if (subcategoryData && subcategoryData['图片'] !== '无图片') {
                 const imageContainer = document.getElementById('image-container');
                 const imgElement = document.createElement('img');
-                imgElement.src = images/${subcategoryData['图片']};
+                imgElement.src = `images/${subcategoryData['图片']}`;
                 imgElement.alt = subcategory;
                 imageContainer.appendChild(imgElement);
             }
@@ -178,7 +177,7 @@ function loadQuestions() {
             let wordTranslation = wordsTranslation.find(item => item['原文'] === cleanWord);
 
             if (wordTranslation) {
-                return <span class="translatable" style="text-decoration: underline; cursor: pointer;" onmouseover="showTooltip(event, '${wordTranslation['翻译']}')" onmouseout="hideTooltip()">${word}</span>;
+                return `<span class="translatable" style="text-decoration: underline; cursor: pointer;" onmouseover="showTooltip(event, '${wordTranslation['翻译']}')" onmouseout="hideTooltip()">${word}</span>`;
             } else {
                 return word;
             }
