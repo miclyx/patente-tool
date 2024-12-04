@@ -268,6 +268,10 @@ function toggleAnswer(button, answerText) {
         button.innerText = '显示答案';
     }
 }
+    // Go back to the previous page
+    function goBack() {
+        window.history.back();
+    }
 
 // 在页面加载时调用相应函数
 window.onload = async function() {
