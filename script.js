@@ -11,69 +11,71 @@ let wordsTranslation = [];  // 全局变量存储单词翻译
             .catch(error => console.error('Error loading translations:', error));
     }
 
-// 检查题目是否已被标记
-function isQuestionMarked(questionText) {
-    const markedQuestions = JSON.parse(localStorage.getItem('markedQuestions')) || [];
-    return markedQuestions.includes(questionText);
-}
 
 // 切换标记状态
-async function toggleMarkQuestion(questionText, button) {
+async function toggleMarkQuestion(questionId, button) {
     const userId = "demoUser";  // 这里需要每个用户的唯一 ID
+
+    // 检查题目是否已经被标记
     let { data, error } = await supabase
         .from('marked_questions')
-        .select('questions')
+        .select('id')
         .eq('user_id', userId)
+        .eq('question_id', questionId)
         .single();
 
-    let markedQuestions = data ? data.questions : [];
-
-    if (markedQuestions.includes(questionText)) {
+    if (data) {
         // 如果已标记，则取消标记
-        markedQuestions = markedQuestions.filter(q => q !== questionText);
-        button.innerText = '标记';
-        button.classList.remove('marked');
+        const { error: deleteError } = await supabase
+            .from('marked_questions')
+            .delete()
+            .eq('id', data.id);
+
+        if (deleteError) {
+            console.error('取消标记问题时出错：', deleteError);
+        } else {
+            button.innerText = '标记';
+            button.classList.remove('marked');
+        }
     } else {
         // 如果未标记，则进行标记
-        markedQuestions.push(questionText);
-        button.innerText = '取消标记';
-        button.classList.add('marked');
-    }
+        const { error: insertError } = await supabase
+            .from('marked_questions')
+            .insert({ user_id: userId, question_id: questionId });
 
-    // 保存更新到 Supabase
-    const { error: updateError } = await supabase
-        .from('marked_questions')
-        .upsert({ user_id: userId, questions: markedQuestions });
-
-    if (updateError) {
-        console.error('更新标记问题时出错：', updateError);
+        if (insertError) {
+            console.error('标记问题时出错：', insertError);
+        } else {
+            button.innerText = '取消标记';
+            button.classList.add('marked');
+        }
     }
 }
+
 
 async function loadMarkedQuestions() {
     const userId = "demoUser"; // 这里需要每个用户的唯一 ID
     let { data, error } = await supabase
         .from('marked_questions')
-        .select('questions')
-        .eq('user_id', userId)
-        .single();
+        .select('question_id')
+        .eq('user_id', userId);
 
     if (error) {
         console.error('加载标记问题时出错：', error);
         return;
     }
 
-    const markedQuestions = data ? data.questions : [];
+    const markedQuestionIds = data ? data.map(item => item.question_id) : [];
 
     // 更新页面中标记的状态
     const questionsList = document.getElementById('questions-list');
     if (questionsList) {
         const questionItems = questionsList.querySelectorAll('.question-item');
         questionItems.forEach(item => {
-            const questionText = item.querySelector('p').innerText;
+            const questionId = item.getAttribute('data-question-id');
             const markButton = item.querySelector('.mark-button');
 
-            if (markedQuestions.includes(questionText)) {
+            if (markedQuestionIds.includes(questionId)) {
                 markButton.innerText = '取消标记';
                 markButton.classList.add('marked');
             } else {
