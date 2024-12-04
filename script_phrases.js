@@ -172,7 +172,7 @@ async function loadQuestionsWithPhrases() {
 function addPhraseTranslationToText(text) {
     let updatedText = text;
     phrasesTranslation.forEach(phrase => {
-        const phraseRegex = new RegExp(`\\b${phrase['原文']}\\b`, 'g');
+        const phraseRegex = new RegExp(`\\b${phrase['原文']}\\b`, 'gi');
         updatedText = updatedText.replace(phraseRegex, `<span class="translatable" style="text-decoration: underline; cursor: pointer; " onmouseover="showTooltip(event, '${phrase['翻译']}')" onmouseout="hideTooltip()">$&</span>`);
     });
     return updatedText;
