@@ -18,49 +18,26 @@ function isQuestionMarked(questionText) {
     return markedQuestions.includes(questionText);
 }
 
-async function loadMarkedQuestions() {
-  const userId = "demoUser"; // 这里需要每个用户的唯一 ID
-  const markedQuestionsRef = doc(db, "users", userId);
-
-  try {
-    const docSnap = await getDoc(markedQuestionsRef);
-    if (docSnap.exists()) {
-      const markedQuestions = docSnap.data().markedQuestions || [];
-      // 处理标记状态...
-    } else {
-      console.log("No such document!");
-    }
-  } catch (error) {
-    console.error("Error loading document: ", error);
-  }
-}
-
-async function toggleMarkQuestion(questionText, button) {
-  const userId = "demoUser";
-  const markedQuestionsRef = doc(db, "users", userId);
-
-  try {
-    const docSnap = await getDoc(markedQuestionsRef);
-    let markedQuestions = docSnap.exists() ? docSnap.data().markedQuestions : [];
-
+// 切换标记状态
+function toggleMarkQuestion(questionText, button) {
+    let markedQuestions = JSON.parse(localStorage.getItem('markedQuestions')) || [];
+    
     if (markedQuestions.includes(questionText)) {
-      // 如果已标记，则取消标记
-      markedQuestions = markedQuestions.filter(q => q !== questionText);
-      button.innerText = '标记';
-      button.classList.remove('marked');
+        // 如果已标记，则取消标记
+        markedQuestions = markedQuestions.filter(q => q !== questionText);
+        button.innerText = '标记';
+        button.classList.remove('marked');
     } else {
-      // 如果未标记，则进行标记
-      markedQuestions.push(questionText);
-      button.innerText = '取消标记';
-      button.classList.add('marked');
+        // 如果未标记，则进行标记
+        markedQuestions.push(questionText);
+        button.innerText = '取消标记';
+        button.classList.add('marked');
     }
 
-    // 保存更新到 Firestore
-    await setDoc(markedQuestionsRef, { markedQuestions });
-  } catch (error) {
-    console.error("Error updating document: ", error);
-  }
+    // 保存更新到 localStorage
+    localStorage.setItem('markedQuestions', JSON.stringify(markedQuestions));
 }
+
 
 
     // Load categories from JSON file
@@ -257,7 +234,6 @@ function loadQuestions() {
             loadSubcategories();
         } else if (document.getElementById('questions-list')) {
             loadQuestions();
-            loadMarkedQuestions();  // 加载标记状态
         }
     };
 
