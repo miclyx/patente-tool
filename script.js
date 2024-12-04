@@ -129,6 +129,14 @@ async function loadQuestions() {
                 questionTextElement.innerHTML = addWordTranslationToText(question['题目']);
                 questionElement.appendChild(questionTextElement);
 
+                // 创建显示答案按钮
+                const answerButton = document.createElement('button');
+                answerButton.innerText = '显示答案';
+                answerButton.onclick = function() {
+                    toggleAnswer(answerButton, question['答案']);
+                };
+                questionElement.appendChild(answerButton);
+
                 // 创建标记按钮
                 const markButton = document.createElement('button');
                 markButton.classList.add('mark-button');
@@ -156,12 +164,22 @@ async function loadQuestions() {
 
 // 添加单词翻译并支持悬停显示
 function addWordTranslationToText(text) {
-    let updatedText = text;
-    wordsTranslation.forEach(word => {
-        const wordRegex = new RegExp(`\b${word['原文']}\b`, 'g');
-        updatedText = updatedText.replace(wordRegex, `<span class="translatable" style="text-decoration: underline; cursor: pointer; " onmouseover="showTooltip(event, '${word['翻译']}')" onmouseout="hideTooltip()">$&</span>`);
+    let words = text.split(' ');  // 将句子拆分为单词数组
+    let updatedWords = words.map(word => {
+        // 去除标点符号
+        let cleanWord = word.replace(/[.,?!;:()]/g, '');
+
+        // 查找单词翻译
+        let wordTranslation = wordsTranslation.find(item => item['原文'] === cleanWord);
+
+        if (wordTranslation) {
+            return `<span class="translatable" style="text-decoration: underline; cursor: pointer; background-color: yellow;" onmouseover="showTooltip(event, '${wordTranslation['翻译']}')" onmouseout="hideTooltip()">${word}</span>`;
+        } else {
+            return word;
+        }
     });
-    return updatedText;
+
+    return updatedWords.join(' ');  // 将更新后的单词数组重新组合成句子
 }
 
 // 显示翻译的工具提示
@@ -182,6 +200,25 @@ function hideTooltip() {
     const tooltip = document.querySelector('.tooltip');
     if (tooltip) {
         tooltip.remove();
+    }
+}
+
+// 切换答案的可见性
+function toggleAnswer(button, answerText) {
+    let answerDiv = button.nextElementSibling;
+    if (!answerDiv) {
+        answerDiv = document.createElement('div');
+        answerDiv.classList.add('answer');
+        answerDiv.innerText = answerText;
+        button.parentNode.insertBefore(answerDiv, button.nextSibling);
+    }
+
+    if (answerDiv.style.display === 'none' || !answerDiv.style.display) {
+        answerDiv.style.display = 'block';
+        button.innerText = '隐藏答案';
+    } else {
+        answerDiv.style.display = 'none';
+        button.innerText = '显示答案';
     }
 }
 
