@@ -226,7 +226,9 @@ function addWordTranslationToText(text) {
         let cleanWord = word.replace(/[.,?!;:()]/g, '');
 
         // 查找单词翻译
-        let wordTranslation = wordsTranslation.find(item => item['原文'] === cleanWord);
+        let wordTranslation = wordsTranslation.find(item => 
+            item['原文'].toLowerCase() === cleanWord.toLowerCase()
+        );
 
         if (wordTranslation) {
             return `<span class="translatable" style="text-decoration: underline; cursor: pointer; " onmouseover="showTooltip(event, '${wordTranslation['翻译']}')" onmouseout="hideTooltip()">${word}</span>`;
