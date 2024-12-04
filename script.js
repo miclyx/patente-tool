@@ -1,5 +1,3 @@
-// 使用 Supabase 实现跨设备保存标记状态
-// 由于在 HTML 中已设置了 Supabase 的 URL 和 Key，这里不需要再次设置
 
 let wordsTranslation = [];  // 全局变量存储单词翻译
 let markedQuestions = [];  // 全局变量存储标记的题目
