@@ -134,11 +134,39 @@ async function loadQuestions() {
     const urlParams = new URLSearchParams(window.location.search);
     const subcategory = urlParams.get('subcategory');
 
+    fetch('categories.json')
+        .then(response => response.json())
+        .then(data => {
+            // 加载相关的图片
+            const subcategoryData = data.find(item => item['小分类'] === subcategory);
+            if (subcategoryData && subcategoryData['图片'] && subcategoryData['图片'] !== '无图片') {
+                const imageContainer = document.getElementById('image-container');
+                imageContainer.innerHTML = ''; // 清空容器内容
+                const imgPath = `images/${subcategoryData['图片']}`;
+                console.log('Image source:', imgPath);  // 调试信息
+                const imgElement = document.createElement('img');
+                imgElement.src = imgPath;
+                imgElement.alt = subcategory;
+                imgElement.onload = function() {
+                    console.log('Image loaded successfully:', imgPath);
+                };
+                imgElement.onerror = function() {
+                    console.error('Error loading image:', imgPath);
+                    imageContainer.innerHTML = '<p>图片加载失败，请检查路径或文件是否存在。</p>';
+                };
+                imageContainer.appendChild(imgElement);
+            } else {
+                console.log('No valid image found for subcategory:', subcategory);
+                const imageContainer = document.getElementById('image-container');
+                imageContainer.innerHTML = '<p>未找到对应的图片。</p>';
+            }
+        })
+        .catch(error => console.error('Error loading categories for image:', error));
+
     fetch('questions.json')
         .then(response => response.json())
         .then(data => {
             const questionsList = document.getElementById('questions-list');
-            const imageContainer = document.getElementById('image-container');
             if (questionsList) {
                 questionsList.innerHTML = '';
                 // 筛选问题
@@ -171,23 +199,6 @@ async function loadQuestions() {
                     questionElement.appendChild(markButton);
                     questionsList.appendChild(questionElement);
                 });
-
-                // 加载图片
-                const subcategoryData = data.find(item => item['小分类'] === subcategory);
-                if (subcategoryData && subcategoryData['图片'] && subcategoryData['图片'] !== '无图片') {
-                    imageContainer.innerHTML = '';
-                    const imgPath = `images/${subcategoryData['图片']}`;
-                    console.log('Image source:', imgPath);  // 调试信息
-                    const imgElement = document.createElement('img');
-                    imgElement.src = imgPath;
-                    imgElement.alt = subcategory;
-                    imgElement.onerror = function() {
-                        console.error('Error loading image:', imgPath);
-                    };
-                    imageContainer.appendChild(imgElement);
-                } else {
-                    console.log('No valid image found for subcategory:', subcategory);
-                }
             }
         })
         .catch(error => console.error('Error loading questions:', error));
