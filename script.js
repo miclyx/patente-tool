@@ -1,7 +1,6 @@
-import { createClient } from '@supabase/supabase-js'
 const supabaseUrl = 'https://ghjtiktynoidljnthqjc.supabase.co';  // 你的 Supabase 项目 URL
 const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdoanRpa3R5bm9pZGxqbnRocWpjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzMyNzY4MjgsImV4cCI6MjA0ODg1MjgyOH0.pff0q4Zz7HxE1MvlXOblZRpV-javKLJdexVyl_wc0IE';     // 你的 Supabase anon 密钥
-const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+const supabase = supabase.createClient('https://ghjtiktynoidljnthqjc.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdoanRpa3R5bm9pZGxqbnRocWpjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzMyNzY4MjgsImV4cCI6MjA0ODg1MjgyOH0.pff0q4Zz7HxE1MvlXOblZRpV-javKLJdexVyl_wc0IE');
 
 let wordsTranslation = [];  // 全局变量存储单词翻译
 
