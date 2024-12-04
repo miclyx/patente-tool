@@ -22,9 +22,9 @@
   };
 
   // Initialize Firebase
-  const app = initializeApp(firebaseConfig);
-  const analytics = getAnalytics(app);
-                const db = getFirestore(app);
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
+const db = getFirestore(app);
   
   window.db = db; // 将 Firestore 实例绑定到全局 window 对象上
 </script>
