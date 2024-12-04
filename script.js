@@ -70,46 +70,97 @@ async function toggleMarkQuestion(questionText, button) {
     }
 }
 
+// 加载分类数据
+function loadCategories() {
+    fetch('categories.json')
+        .then(response => response.json())
+        .then(data => {
+            const categoryList = document.getElementById('category-list');
+            if (categoryList) {
+                // 使用 Set 存储唯一的分类
+                const uniqueCategories = new Set();
+                data.forEach(category => {
+                    uniqueCategories.add(category['大分类']);
+                });
+
+                // 显示唯一的分类
+                Array.from(uniqueCategories).forEach(category => {
+                    const categoryElement = document.createElement('div');
+                    categoryElement.classList.add('category-item');
+                    categoryElement.innerHTML = `<a href="category.html?category=${encodeURIComponent(category)}">${category}</a>`;
+                    categoryList.appendChild(categoryElement);
+                });
+            }
+        })
+        .catch(error => console.error('Error loading categories:', error));
+}
+
+// 加载子分类数据
+function loadSubcategories() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const category = urlParams.get('category');
+
+    fetch('categories.json')
+        .then(response => response.json())
+        .then(data => {
+            const subcategoryList = document.getElementById('subcategory-list');
+            if (subcategoryList && category !== null) {
+                // 筛选子分类
+                const filteredSubcategories = data.filter(item => item['大分类'] === category);
+                filteredSubcategories.forEach(subcategory => {
+                    const subcategoryElement = document.createElement('div');
+                    subcategoryElement.classList.add('subcategory-item');
+                    subcategoryElement.innerHTML = `<a href="questions.html?subcategory=${encodeURIComponent(subcategory['小分类'])}">${subcategory['小分类']}</a>`;
+                    subcategoryList.appendChild(subcategoryElement);
+                });
+            }
+        })
+        .catch(error => console.error('Error loading subcategories:', error));
+}
+
 // 加载问题并检查是否已标记
 async function loadQuestions() {
     // 加载标记的题目
     await loadMarkedQuestionsFromDatabase();
 
-    // 示例问题列表，可以替换为从实际数据源获取的问题
-    const questions = [
-        '问题1',
-        '问题2',
-        '问题3'
-    ];
+    const urlParams = new URLSearchParams(window.location.search);
+    const subcategory = urlParams.get('subcategory');
 
-    const questionsList = document.getElementById('questions-list');
-    if (questionsList) {
-        questionsList.innerHTML = '';
-        for (const questionText of questions) {
-            const questionElement = document.createElement('div');
-            questionElement.classList.add('question-item');
-            questionElement.innerText = questionText;
+    fetch('questions.json')
+        .then(response => response.json())
+        .then(data => {
+            const questionsList = document.getElementById('questions-list');
+            if (questionsList) {
+                questionsList.innerHTML = '';
+                // 筛选问题
+                const filteredQuestions = data.filter(question => question['类别'] === subcategory);
+                filteredQuestions.forEach(question => {
+                    const questionElement = document.createElement('div');
+                    questionElement.classList.add('question-item');
+                    questionElement.innerText = question['题目'];
 
-            // 创建标记按钮
-            const markButton = document.createElement('button');
-            markButton.classList.add('mark-button');
+                    // 创建标记按钮
+                    const markButton = document.createElement('button');
+                    markButton.classList.add('mark-button');
 
-            // 检查题目是否已标记，并更新按钮状态
-            if (isQuestionMarked(questionText)) {
-                markButton.innerText = '取消标记';
-                markButton.classList.add('marked');
-            } else {
-                markButton.innerText = '标记';
+                    // 检查题目是否已标记，并更新按钮状态
+                    if (isQuestionMarked(question['题目'])) {
+                        markButton.innerText = '取消标记';
+                        markButton.classList.add('marked');
+                    } else {
+                        markButton.innerText = '标记';
+                    }
+
+                    markButton.onclick = function() {
+                        toggleMarkQuestion(question['题目'], markButton);
+                    };
+
+                    questionElement.appendChild(markButton);
+                    questionsList.appendChild(questionElement);
+                });
             }
-
-            markButton.onclick = function() {
-                toggleMarkQuestion(questionText, markButton);
-            };
-
-            questionElement.appendChild(markButton);
-            questionsList.appendChild(questionElement);
-        }
-    }
+        })
+        .catch(error => console.error('Error loading questions:', error));
 }
 
 // 在页面加载时调用相应函数
