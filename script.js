@@ -223,7 +223,7 @@ function addWordTranslationToText(text) {
         let wordTranslation = wordsTranslation.find(item => item['原文'] === cleanWord);
 
         if (wordTranslation) {
-            return `<span class="translatable" style="text-decoration: underline; cursor: pointer; background-color: yellow;" onmouseover="showTooltip(event, '${wordTranslation['翻译']}')" onmouseout="hideTooltip()">${word}</span>`;
+            return `<span class="translatable" style="text-decoration: underline; cursor: pointer; " onmouseover="showTooltip(event, '${wordTranslation['翻译']}')" onmouseout="hideTooltip()">${word}</span>`;
         } else {
             return word;
         }
