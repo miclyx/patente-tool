@@ -190,6 +190,15 @@ function hideTooltip() {
     }
 }
 
+// 切换到单词翻译页面
+function switchToWordTranslation() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const subcategory = urlParams.get('subcategory');
+    if (subcategory) {
+        window.location.href = `questions.html?subcategory=${encodeURIComponent(subcategory)}`;
+    }
+}
+
 // 在页面加载时调用相应函数
 window.onload = async function() {
     loadPhrasesTranslations();  // 加载短语翻译数据
