@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -5,28 +6,27 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>标记的题目</title>
     <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="nav_styles.css">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
         <!-- 初始化 Supabase 客户端 -->
     <script>
         const supabaseUrl = 'https://ghjtiktynoidljnthqjc.supabase.co';
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdoanRpa3R5bm9pZGxqbnRocWpjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzMyNzY4MjgsImV4cCI6MjA0ODg1MjgyOH0.pff0q4Zz7HxE1MvlXOblZRpV-javKLJdexVyl_wc0IE';
         window.supabase = supabase.createClient(supabaseUrl, supabaseKey);
-    </script>
-        let markedQuestions = [];  // 全局变量存储标记的题目
+            let markedQuestions = [];  // 全局变量存储标记的题目
 
         // 加载标记的题目
         async function loadMarkedQuestionsFromDatabase() {
             const { data, error } = await supabase
                 .from('marked_questions')
-                .select('question_text');
+                .select('question_text, answer_text');
 
             if (error) {
                 console.error('Error loading marked questions:', error);
                 return;
             }
 
-            markedQuestions = data.map(item => item.question_text);
+            markedQuestions = data;
             displayMarkedQuestions();
         }
 
@@ -40,12 +40,43 @@
                 return;
             }
 
-            markedQuestions.forEach(questionText => {
+            markedQuestions.forEach(question => {
                 const questionElement = document.createElement('div');
                 questionElement.classList.add('marked-question-item');
-                questionElement.innerText = questionText;
+
+                // 创建问题文本元素
+                const questionTextElement = document.createElement('p');
+                questionTextElement.innerText = question.question_text;
+                questionElement.appendChild(questionTextElement);
+
+                // 创建显示答案按钮
+                const answerButton = document.createElement('button');
+                answerButton.innerText = '显示答案';
+                answerButton.onclick = function() {
+                    toggleAnswer(answerButton, answerDiv);
+                };
+                questionElement.appendChild(answerButton);
+
+                // 创建答案内容元素
+                const answerDiv = document.createElement('div');
+                answerDiv.classList.add('answer');
+                answerDiv.style.display = 'none';
+                answerDiv.innerText = question.answer_text;
+                questionElement.appendChild(answerDiv);
+
                 markedQuestionsList.appendChild(questionElement);
             });
+        }
+
+        // 切换答案的显示状态
+        function toggleAnswer(button, answerDiv) {
+            if (answerDiv.style.display === 'none') {
+                answerDiv.style.display = 'block';
+                button.innerText = '隐藏答案';
+            } else {
+                answerDiv.style.display = 'none';
+                button.innerText = '显示答案';
+            }
         }
 
         // 页面加载时调用加载标记题目的函数
@@ -56,11 +87,11 @@
 </head>
 <body>
     <header>
-                <nav>
-            <ul>
-                <li><a href="index.html">主要类别</a></li>
-                <li><a href="category.html">子类别</a></li>
-                <li><a href="Marked_Questions_Page.html">标记的题目</a></li>
+        <nav>
+            <ul style="display: flex; justify-content: center; list-style-type: none; padding: 0;">
+                <li style="margin: 0 15px;"><a href="index.html">主要类别</a></li>
+                <li style="margin: 0 15px;"><a href="category.html">子类别</a></li>
+                <li style="margin: 0 15px;"><a href="marked_questions.html">标记的题目</a></li>
             </ul>
         </nav>
         <h1>标记的题目</h1>
