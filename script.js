@@ -146,7 +146,11 @@ async function loadQuestions() {
                 filteredQuestions.forEach(question => {
                     const questionElement = document.createElement('div');
                     questionElement.classList.add('question-item');
-                    questionElement.innerText = question['题目'];
+
+                    // 创建问题文本元素
+                    const questionTextElement = document.createElement('p');
+                    questionTextElement.innerText = question['题目'];
+                    questionElement.appendChild(questionTextElement);
 
                     // 创建标记按钮
                     const markButton = document.createElement('button');
