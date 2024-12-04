@@ -167,7 +167,7 @@ function addPhraseTranslationToText(text) {
     let updatedText = text;
     phrasesTranslation.forEach(phrase => {
         const phraseRegex = new RegExp(`\\b${phrase['原文']}\\b`, 'g');
-        updatedText = updatedText.replace(phraseRegex, `<span class="translatable" style="text-decoration: underline; cursor: pointer; background-color: yellow;" onmouseover="showTooltip(event, '${phrase['翻译']}')" onmouseout="hideTooltip()">$&</span>`);
+        updatedText = updatedText.replace(phraseRegex, `<span class="translatable" style="text-decoration: underline; cursor: pointer; " onmouseover="showTooltip(event, '${phrase['翻译']}')" onmouseout="hideTooltip()">$&</span>`);
     });
     return updatedText;
 }
