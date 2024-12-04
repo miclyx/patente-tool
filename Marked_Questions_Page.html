@@ -14,7 +14,8 @@
         const supabaseUrl = 'https://ghjtiktynoidljnthqjc.supabase.co';
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdoanRpa3R5bm9pZGxqbnRocWpjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzMyNzY4MjgsImV4cCI6MjA0ODg1MjgyOH0.pff0q4Zz7HxE1MvlXOblZRpV-javKLJdexVyl_wc0IE';
         window.supabase = supabase.createClient(supabaseUrl, supabaseKey);
-            let markedQuestions = [];  // 全局变量存储标记的题目
+        let markedQuestions = [];  // 全局变量存储标记的题目
+        let questionsData = [];   // 全局变量存储所有问题数据
 
         // 加载标记的题目
         async function loadMarkedQuestionsFromDatabase() {
@@ -28,7 +29,18 @@
             }
 
             markedQuestions = data;
-            displayMarkedQuestions();
+            loadQuestionsData();
+        }
+
+        // 加载所有问题数据
+        function loadQuestionsData() {
+            fetch('questions.json')
+                .then(response => response.json())
+                .then(data => {
+                    questionsData = data;
+                    displayMarkedQuestions();
+                })
+                .catch(error => console.error('Error loading questions data:', error));
         }
 
         // 显示标记的题目
@@ -41,7 +53,7 @@
                 return;
             }
 
-            markedQuestions.forEach(question => {
+            for (let question of markedQuestions) {
                 const questionElement = document.createElement('div');
                 questionElement.classList.add('marked-question-item');
 
@@ -50,8 +62,40 @@
                 questionTextElement.innerText = question.question_text;
                 questionElement.appendChild(questionTextElement);
 
+                // 加载并显示答案按钮
+                const answerButton = document.createElement('button');
+                answerButton.innerText = '显示答案';
+                answerButton.onclick = function() {
+                    toggleAnswer(question.question_text, answerButton, answerDiv);
+                };
+                questionElement.appendChild(answerButton);
+
+                // 创建答案内容元素
+                const answerDiv = document.createElement('div');
+                answerDiv.classList.add('answer');
+                answerDiv.style.display = 'none';
+                questionElement.appendChild(answerDiv);
+
                 markedQuestionsList.appendChild(questionElement);
-            });
+            }
+        }
+
+        // 切换答案的显示状态
+        function toggleAnswer(questionText, button, answerDiv) {
+            if (answerDiv.style.display === 'none') {
+                // 查找问题的答案
+                const questionData = questionsData.find(q => q['题目'] === questionText);
+                if (questionData) {
+                    answerDiv.innerText = questionData['答案'];
+                    answerDiv.style.display = 'block';
+                    button.innerText = '隐藏答案';
+                } else {
+                    console.error('Answer not found for the question:', questionText);
+                }
+            } else {
+                answerDiv.style.display = 'none';
+                button.innerText = '显示答案';
+            }
         }
 
         // 页面加载时调用加载标记题目的函数
