@@ -184,6 +184,15 @@ async function loadQuestions() {
                 };
                 questionElement.appendChild(answerButton);
 
+                
+                // 创建答案内容元素
+                const answerDiv = document.createElement('div');
+                answerDiv.classList.add('answer');
+                answerDiv.style.display = 'none';
+                answerDiv.innerText = question['答案'];
+                questionElement.appendChild(answerDiv);
+
+
                 // 创建标记按钮
                 const markButton = document.createElement('button');
                 markButton.classList.add('mark-button');
