@@ -50,7 +50,7 @@ function loadQuestionsWithPhrases() {
             if (subcategoryData && subcategoryData['图片'] !== '无图片') {
                 const imageContainer = document.getElementById('image-container');
                 const imgElement = document.createElement('img');
-                imgElement.src = images/${subcategoryData['图片']};
+                imgElement.src = `images/${subcategoryData['图片']}`;
                 imgElement.alt = subcategory;
                 imageContainer.appendChild(imgElement);
             }
@@ -118,8 +118,8 @@ function loadQuestionsWithPhrases() {
 function addPhraseTranslationToText(text) {
     let updatedText = text;
     phrasesTranslation.forEach(phrase => {
-        const phraseRegex = new RegExp(\\b${phrase['原文']}\\b, 'g');
-        updatedText = updatedText.replace(phraseRegex, <span class="translatable" style="text-decoration: underline; cursor: pointer;" onmouseover="showTooltip(event, '${phrase['翻译']}')" onmouseout="hideTooltip()">$&</span>);
+        const phraseRegex = new RegExp(`\\b${phrase['原文']}\\b`, 'g');
+        updatedText = updatedText.replace(phraseRegex, `<span class="translatable" style="text-decoration: underline; cursor: pointer;" onmouseover="showTooltip(event, '${phrase['翻译']}')" onmouseout="hideTooltip()">$&</span>`);
     });
     return updatedText;
 }
@@ -167,7 +167,7 @@ function switchToWordTranslation() {
     const urlParams = new URLSearchParams(window.location.search);
     const subcategory = urlParams.get('subcategory');
     if (subcategory) {
-        window.location.href = questions.html?subcategory=${encodeURIComponent(subcategory)};
+        window.location.href = `questions.html?subcategory=${encodeURIComponent(subcategory)}`;
     }
 }
 
