@@ -132,7 +132,8 @@
                 return;
             }
 
-            for (let question of markedQuestions) {
+            for (let index = 0; index < markedQuestions.length; index++) {
+    const question = markedQuestions[index];
                 const questionElement = document.createElement('div');
                 questionElement.classList.add('marked-question-item');
 
