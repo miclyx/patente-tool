@@ -1,3 +1,4 @@
+
 // 使用 Supabase 实现跨设备保存标记状态
 // Supabase URL 和 Key 在 HTML 中已经配置，确保只加载一次 Supabase 客户端
 
@@ -40,9 +41,10 @@ function isQuestionMarked(questionText) {
 
 // 切换标记状态
 async function toggleMarkQuestion(questionText, button) {
-    const currentPage = window.location.href.split('#')[0]; // 获取当前页面的基础 URL
-    const questionID = encodeURIComponent(questionText);   // 为题目生成唯一 ID
-    
+    if (!window.supabase) {
+        console.error('Supabase client not initialized');
+        return;
+    }
     const isMarked = isQuestionMarked(questionText);
 
     if (isMarked) {
@@ -56,20 +58,24 @@ async function toggleMarkQuestion(questionText, button) {
             console.error('Error unmarking question:', error);
             return;
         }
-        // 从本地状态中移除标记
-        markedQuestions = markedQuestions.filter(q => q.question_text !== questionText);
+        // 更新本地标记状态
+        markedQuestions = markedQuestions.filter(q => q !== questionText);
+        button.innerText = '标记';
+        button.classList.remove('marked');
     } else {
-        // 如果未标记，添加标记并存储页面链接
+        // 如果未标记，则进行标记
         const { error } = await supabase
             .from('marked_questions')
-            .insert([{ question_text: questionText, page: `${currentPage}#${questionID}` }]);
+            .insert([{ question_text: questionText }]);
 
         if (error) {
             console.error('Error marking question:', error);
             return;
         }
         // 更新本地标记状态
-        markedQuestions.push({ question_text: questionText, page: `${currentPage}#${questionID}` });
+        markedQuestions.push(questionText);
+        button.innerText = '取消标记';
+        button.classList.add('marked');
     }
 }
 
@@ -165,10 +171,6 @@ async function loadQuestions() {
             filteredQuestions.forEach(question => {
                 const questionElement = document.createElement('div');
                 questionElement.classList.add('question-item');
-                
-                // 为每个问题添加唯一的 ID
-    questionElement.id = encodeURIComponent(question['题目']);
-
 
                 // 创建问题文本元素
                 const questionTextElement = document.createElement('p');
@@ -292,13 +294,5 @@ window.onload = async function() {
         await loadSubcategories();
     } else if (document.getElementById('questions-list')) {
         await loadQuestions();
-    }
-    // 检查是否有 hash 值，并滚动到对应题目
-    const hash = window.location.hash;
-    if (hash) {
-        const targetElement = document.getElementById(decodeURIComponent(hash.substring(1)));
-        if (targetElement) {
-            targetElement.scrollIntoView({ behavior: 'smooth' });
-        }
     }
 };
