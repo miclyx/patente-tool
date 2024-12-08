@@ -298,4 +298,12 @@ window.onload = async function() {
     } else if (document.getElementById('questions-list')) {
         await loadQuestions();
     }
+    // 检查是否有 hash 值，并滚动到对应题目
+    const hash = window.location.hash;
+    if (hash) {
+        const targetElement = document.getElementById(decodeURIComponent(hash.substring(1)));
+        if (targetElement) {
+            targetElement.scrollIntoView({ behavior: 'smooth' });
+        }
+    }
 };
