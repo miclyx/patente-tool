@@ -148,8 +148,6 @@
                 questionElement.appendChild(questionTextElement);
 
                 // 创建可点击的题目文本
-        const questionTextElement = document.createElement('p');
-        questionTextElement.innerText = question.question_text;
         questionTextElement.style.cursor = 'pointer'; // 鼠标悬停显示为手型
         questionTextElement.onclick = function () {
             if (question.page) {
