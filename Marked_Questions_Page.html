@@ -136,6 +136,11 @@
                 const questionElement = document.createElement('div');
                 questionElement.classList.add('marked-question-item');
 
+                // 添加序号
+                const questionNumber = document.createElement('span');
+                questionNumber.innerText = `${index + 1}. `;
+                questionElement.appendChild(questionNumber);
+
                 // 创建问题文本元素
                 const questionTextElement = document.createElement('p');
                 questionTextElement.innerText = question.question_text;
@@ -150,10 +155,21 @@
                 questionElement.appendChild(answerButton);
 
                 // 创建答案内容元素
-                const answerDiv = document.createElement('div');
-                answerDiv.classList.add('answer');
-                answerDiv.style.display = 'none';
-                questionElement.appendChild(answerDiv);
+        const answerDiv = document.createElement('div');
+        answerDiv.classList.add('answer');
+        answerDiv.style.display = 'none'; // 初始隐藏
+        answerDiv.innerText = '加载中...'; // 占位内容
+        questionElement.appendChild(answerDiv);
+                
+                // 添加返回页面的按钮
+        if (question.page) {
+            const returnButton = document.createElement('button');
+            returnButton.innerText = '返回页面';
+            returnButton.onclick = function () {
+                window.location.href = question.page; // 跳转到对应页面
+            };
+            questionElement.appendChild(returnButton);
+        }
 
                 markedQuestionsList.appendChild(questionElement);
             }
