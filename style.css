@@ -57,7 +57,7 @@ button:hover {
 }
 
 .mark-button.marked {
-    background-color: #f92b2b; /* 标记后的按钮颜色 */
+    background-color: #3f7aef; /* 标记后的按钮颜色 */
 }
 
 .mark-button:hover {
