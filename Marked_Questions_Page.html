@@ -147,6 +147,19 @@
                 questionTextElement.innerText = question.question_text;
                 questionElement.appendChild(questionTextElement);
 
+                // 创建可点击的题目文本
+        const questionTextElement = document.createElement('p');
+        questionTextElement.innerText = question.question_text;
+        questionTextElement.style.cursor = 'pointer'; // 鼠标悬停显示为手型
+        questionTextElement.onclick = function () {
+            if (question.page) {
+                window.location.href = question.page; // 跳转到对应页面
+            } else {
+                console.error('Page URL is missing for the question:', question.question_text);
+            }
+        };
+        questionElement.appendChild(questionTextElement);
+
                 // 加载并显示答案按钮
                 const answerButton = document.createElement('button');
                 answerButton.innerText = '显示答案';
