@@ -170,6 +170,10 @@ async function loadQuestions() {
             filteredQuestions.forEach(question => {
                 const questionElement = document.createElement('div');
                 questionElement.classList.add('question-item');
+                
+                // 为每个问题添加唯一的 ID
+    questionElement.id = encodeURIComponent(question['题目']);
+
 
                 // 创建问题文本元素
                 const questionTextElement = document.createElement('p');
