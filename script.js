@@ -40,10 +40,9 @@ function isQuestionMarked(questionText) {
 
 // 切换标记状态
 async function toggleMarkQuestion(questionText, button) {
-    if (!window.supabase) {
-        console.error('Supabase client not initialized');
-        return;
-    }
+    const currentPage = window.location.href.split('#')[0]; // 获取当前页面的基础 URL
+    const questionID = encodeURIComponent(questionText);   // 为题目生成唯一 ID
+    
     const isMarked = isQuestionMarked(questionText);
 
     if (isMarked) {
@@ -57,24 +56,20 @@ async function toggleMarkQuestion(questionText, button) {
             console.error('Error unmarking question:', error);
             return;
         }
-        // 更新本地标记状态
-        markedQuestions = markedQuestions.filter(q => q !== questionText);
-        button.innerText = '标记';
-        button.classList.remove('marked');
+        // 从本地状态中移除标记
+        markedQuestions = markedQuestions.filter(q => q.question_text !== questionText);
     } else {
-        // 如果未标记，则进行标记
+        // 如果未标记，添加标记并存储页面链接
         const { error } = await supabase
             .from('marked_questions')
-            .insert([{ question_text: questionText, page: pageUrl }]);
+            .insert([{ question_text: questionText, page: `${currentPage}#${questionID}` }]);
 
         if (error) {
             console.error('Error marking question:', error);
             return;
         }
         // 更新本地标记状态
-        markedQuestions.push({ text: questionText, page: pageUrl });
-        button.innerText = '取消标记';
-        button.classList.add('marked');
+        markedQuestions.push({ question_text: questionText, page: `${currentPage}#${questionID}` });
     }
 }
 
