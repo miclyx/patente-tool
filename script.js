@@ -65,14 +65,14 @@ async function toggleMarkQuestion(questionText, button) {
         // 如果未标记，则进行标记
         const { error } = await supabase
             .from('marked_questions')
-            .insert([{ question_text: questionText }]);
+            .insert([{ question_text: questionText, page: pageUrl }]);
 
         if (error) {
             console.error('Error marking question:', error);
             return;
         }
         // 更新本地标记状态
-        markedQuestions.push(questionText);
+        markedQuestions.push({ text: questionText, page: pageUrl });
         button.innerText = '取消标记';
         button.classList.add('marked');
     }
